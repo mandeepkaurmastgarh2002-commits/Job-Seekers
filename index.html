@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>First Job Helper | Free Job Search, Resume Checker and Interview Practice for Freshers</title>
+<meta name="description" content="Free tools for freshers: open job searches on LinkedIn, Naukri and Indeed, check your resume against a job post, and practise interview questions. No signup.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="First Job Helper">
+<meta property="og:description" content="Free tools for freshers: open job searches on LinkedIn, Naukri and Indeed, check your resume against a job post, and practise interview questions. No signup.">
+<meta name="theme-color" content="#0E6B7A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: one narrow column built for a phone. A hero, a row of jump links, then three tool cards
+   (search, resume, interview) and a short FAQ. Teal accent on a cool grey ground, big tap targets, 16px inputs. */
+:root {
+  --bg: #F4F6F8;
+  --surface: #FFFFFF;
+  --soft: #E8EEF2;
+  --ink: #12202B;
+  --muted: #55636F;
+  --line: #D6DDE4;
+  --accent: #0E6B7A;
+  --on-accent: #FFFFFF;
+  --ok: #1B7F4B;
+  --ok-bg: #E2F3E9;
+  --miss: #A64A06;
+  --miss-bg: #FBE9D8;
+  --off: #E3E7EC;
+  --on-off: #6B7783;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D161D; --surface: #152029; --soft: #1D2B36; --ink: #E7EEF3; --muted: #9AA9B5; --line: #293946;
+    --accent: #6CC8D8; --on-accent: #0D161D; --ok: #5FD19A; --ok-bg: #16372A; --miss: #F2A65A; --miss-bg: #3B2A17;
+    --off: #22313D; --on-off: #8D9CA9; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D161D; --surface: #152029; --soft: #1D2B36; --ink: #E7EEF3; --muted: #9AA9B5; --line: #293946;
+  --accent: #6CC8D8; --on-accent: #0D161D; --ok: #5FD19A; --ok-bg: #16372A; --miss: #F2A65A; --miss-bg: #3B2A17;
+  --off: #22313D; --on-off: #8D9CA9; color-scheme: dark;
+}
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-block: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 20px 48px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.hero { padding-block: 28px 18px; }
+.hero h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(32px, 8vw, 46px); line-height: 1.06; letter-spacing: -0.02em; margin: 0 0 12px; text-wrap: balance; }
+.hero p { margin: 0 0 10px; color: var(--muted); font-size: 17px; }
+.privacy { font-size: 14px; font-weight: 500; color: var(--ink); margin: 0; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 24px; padding: 0; list-style: none; }
+.jump a { display: inline-block; padding: 10px 14px; min-height: 44px; box-sizing: border-box; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; border-radius: 4px; }
+.jump a:hover { border-color: var(--accent); }
+
+.tool { background: var(--surface); border: 1px solid var(--line); padding: 20px 18px; margin-bottom: 20px; scroll-margin-top: 12px; }
+.tool h2 { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -0.01em; line-height: 1.15; margin: 0 0 6px; }
+.tool .lead { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+.field { display: block; margin-bottom: 12px; }
+.field > span, .field-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+input[type="text"], textarea, select { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 12px; }
+textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-visible, .jump a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.checks { display: grid; gap: 4px; margin: 4px 0 14px; }
+.check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; }
+.check input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 12px; }
+
+.btn { font: inherit; font-weight: 600; font-size: 16px; min-height: 46px; padding: 10px 18px; border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.btn.alt { background: transparent; color: var(--accent); }
+.btn:hover { filter: brightness(1.08); }
+.btn.is-off { background: var(--off); border-color: var(--off); color: var(--on-off); cursor: not-allowed; filter: none; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 10px; }
+.linkgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.hint { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+
+.result { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.score { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.score .num { font-family: var(--font-display); font-weight: 800; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.score .lbl { color: var(--muted); font-size: 15px; }
+.meter { height: 10px; background: var(--soft); margin: 10px 0 14px; }
+.meter > div { height: 100%; background: var(--accent); width: 0; transition: width .3s ease; }
+.result h3 { font-size: 15px; margin: 14px 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; list-style: none; }
+.chip { font-size: 14px; font-weight: 500; padding: 4px 10px; border-radius: 4px; }
+.chip.ok { background: var(--ok-bg); color: var(--ok); }
+.chip.miss { background: var(--miss-bg); color: var(--miss); }
+.ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 15px; }
+.ticks li { padding-left: 26px; position: relative; }
+.ticks li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
+.ticks li.pass::before { content: "\2713"; color: var(--ok); }
+.ticks li.fail::before { content: "!"; color: var(--miss); width: 16px; text-align: center; }
+.note { font-size: 14px; color: var(--muted); margin: 12px 0 0; }
+
+.qcard { background: var(--soft); padding: 18px; margin-bottom: 12px; }
+.qcat { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+.qtext { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.2; margin: 0; text-wrap: balance; }
+.tip { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 15px; }
+.timer { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 14px 0 6px; }
+.clock { font-family: var(--font-display); font-weight: 800; font-size: 40px; font-variant-numeric: tabular-nums; min-width: 3.4ch; }
+.build { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.build h3 { font-family: var(--font-display); font-size: 20px; margin: 0 0 4px; }
+.out { white-space: pre-wrap; background: var(--soft); padding: 14px; margin: 4px 0 12px; font-size: 15px; }
+
+.faq h2 { font-family: var(--font-display); font-weight: 800; font-size: 26px; margin: 28px 0 12px; }
+.faq details { background: var(--surface); border: 1px solid var(--line); padding: 12px 16px; margin-bottom: 8px; }
+.faq summary { cursor: pointer; font-weight: 600; min-height: 28px; }
+.faq p { margin: 8px 0 0; color: var(--muted); }
+.foot { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (min-width: 560px) {
+  .row2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .linkgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tool { padding: 26px 26px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is First Job Helper really free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. There is no signup, no payment and no hidden fee."}}, {"@type": "Question", "name": "Do you save my resume?", "acceptedAnswer": {"@type": "Answer", "text": "No. The resume checker runs inside your browser. What you type is not sent to any server and is gone when you close the page."}}, {"@type": "Question", "name": "Does it show real jobs?", "acceptedAnswer": {"@type": "Answer", "text": "It opens the real search pages of LinkedIn, Naukri, Indeed and Google with your job and city filled in. The jobs you see come from those websites, not from here."}}, {"@type": "Question", "name": "Will these tools get me a job?", "acceptedAnswer": {"@type": "Answer", "text": "No tool can promise that. They help you search faster, fix missing words in your resume and practise answers. Your results depend on how many good applications you send and how you do in interviews."}}]}</script>
+</head>
+<body>
+<noscript><p style="padding:16px">Please turn on JavaScript to use the tools on this page.</p></noscript>
+<div class="wrap">
+  <div class="brand">First Job Helper</div>
+
+  <header class="hero">
+    <h1>Free tools to help you get your first job</h1>
+    <p>Search jobs faster, check your resume against a job post, and practise interview answers. No signup and no cost.</p>
+    <p class="privacy">Everything you type stays on your phone. Nothing is sent or saved on our side.</p>
+    <ul class="jump" aria-label="Jump to a tool">
+      <li><a href="#search">Search jobs</a></li>
+      <li><a href="#resume">Check resume</a></li>
+      <li><a href="#interview">Practise interview</a></li>
+    </ul>
+  </header>
+
+  <main>
+  <section class="tool" id="search" aria-labelledby="search-h">
+    <h2 id="search-h">Job search helper</h2>
+    <p class="lead">Type the job and the city. The buttons open the live search on each job site, already filled in.</p>
+    <div class="row2">
+      <label class="field"><span>Job title</span>
+        <input type="text" id="s-role" value="Customer support" autocomplete="off" autocapitalize="sentences" placeholder="e.g. data entry, sales, designer"></label>
+      <label class="field"><span>City (or Remote)</span>
+        <input type="text" id="s-city" value="Mumbai" autocomplete="off" placeholder="e.g. Delhi, Pune, Remote"></label>
+    </div>
+    <div class="checks">
+      <label class="check"><input type="checkbox" id="s-fresher" checked> Fresher or entry level only</label>
+      <label class="check"><input type="checkbox" id="s-week"> Posted in the last 7 days</label>
+    </div>
+    <div class="linkgrid" id="s-links">
+      <a class="btn" id="l-linkedin" target="_blank" rel="noopener" href="#search">LinkedIn</a>
+      <a class="btn" id="l-naukri" target="_blank" rel="noopener" href="#search">Naukri</a>
+      <a class="btn" id="l-indeed" target="_blank" rel="noopener" href="#search">Indeed</a>
+      <a class="btn alt" id="l-google" target="_blank" rel="noopener" href="#search">Google</a>
+    </div>
+    <p class="hint" id="s-hint">Change the example above to your own job and city.</p>
+    <p class="note">These buttons open the search pages of other websites. First Job Helper does not list jobs itself. Always check a job is real. A real company never asks you to pay money to get a job.</p>
+  </section>
+
+  <section class="tool" id="resume" aria-labelledby="resume-h">
+    <h2 id="resume-h">Resume checker</h2>
+    <p class="lead">Paste a job post and your resume text. See which important words from the job post your resume is missing.</p>
+    <label class="field"><span>Job post</span>
+      <textarea id="r-job" spellcheck="false"></textarea></label>
+    <label class="field"><span>Your resume text</span>
+      <textarea id="r-resume" spellcheck="false"></textarea></label>
+    <div class="btnrow">
+      <button class="btn" type="button" id="r-check">Check my resume</button>
+      <button class="btn alt" type="button" id="r-clear">Clear both boxes</button>
+    </div>
+    <p class="hint">The boxes start with example text. Clear them and paste your own.</p>
+    <div class="result" id="r-result" aria-live="polite" hidden>
+      <div class="score"><span class="num" id="r-num">0%</span><span class="lbl" id="r-lbl">of the main job words are in your resume</span></div>
+      <div class="meter" aria-hidden="true"><div id="r-bar"></div></div>
+      <h3>Words from the job post that you already use</h3>
+      <ul class="chips" id="r-ok"></ul>
+      <h3>Words missing from your resume</h3>
+      <ul class="chips" id="r-miss"></ul>
+      <p class="note">Only add a missing word if it is true for you. Never list a skill you cannot talk about in an interview.</p>
+      <h3>Quick resume checks</h3>
+      <ul class="ticks" id="r-ticks"></ul>
+    </div>
+  </section>
+
+  <section class="tool" id="interview" aria-labelledby="interview-h">
+    <h2 id="interview-h">Interview practice</h2>
+    <p class="lead">Get a question, say your answer out loud, and watch the timer. About 60 to 90 seconds is a good answer.</p>
+    <label class="field"><span>Type of question</span>
+      <select id="q-cat"></select></label>
+    <div class="qcard">
+      <p class="qcat" id="q-catlabel"></p>
+      <p class="qtext" id="q-text"></p>
+      <p class="tip" id="q-tip" hidden></p>
+    </div>
+    <div class="btnrow">
+      <button class="btn" type="button" id="q-next">Next question</button>
+      <button class="btn alt" type="button" id="q-tipbtn">Show how to answer</button>
+    </div>
+    <div class="timer">
+      <span class="clock" id="t-clock" aria-live="off">0:00</span>
+      <button class="btn alt" type="button" id="t-start">Start</button>
+      <button class="btn alt" type="button" id="t-reset">Reset</button>
+    </div>
+    <p class="hint" id="t-msg"></p>
+
+    <div class="build">
+      <h3>Build your "Tell me about yourself" answer</h3>
+      <p class="lead">Answer three short questions. Copy the result and say it in your own words.</p>
+      <label class="field"><span>1. Who are you now? (degree, college, main skills)</span>
+        <input type="text" id="b-now" placeholder="e.g. my B.Com at XYZ College, with skills in Excel and communication"></label>
+      <label class="field"><span>2. What did you do that shows your skills?</span>
+        <input type="text" id="b-past" placeholder="e.g. organised college fest registrations for 300 students"></label>
+      <label class="field"><span>3. What job do you want and why?</span>
+        <input type="text" id="b-next" placeholder="e.g. a customer support role, because I enjoy solving people's problems"></label>
+      <div class="out" id="b-out">Fill the three boxes above to see your answer here.</div>
+      <button class="btn" type="button" id="b-copy">Copy answer</button>
+    </div>
+  </section>
+  </main>
+
+  <section class="faq" aria-labelledby="faq-h">
+    <h2 id="faq-h">Questions</h2>
+    <details><summary>Is First Job Helper really free?</summary><p>Yes. There is no signup, no payment and no hidden fee.</p></details>
+    <details><summary>Do you save my resume?</summary><p>No. The resume checker runs inside your browser. What you type is not sent to any server and is gone when you close the page.</p></details>
+    <details><summary>Does it show real jobs?</summary><p>It opens the real search pages of LinkedIn, Naukri, Indeed and Google with your job and city filled in. The jobs you see come from those websites, not from here.</p></details>
+    <details><summary>Will these tools get me a job?</summary><p>No tool can promise that. They help you search faster, fix missing words in your resume and practise answers. Your results depend on how many good applications you send and how you do in interviews.</p></details>
+  </section>
+  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman.</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Copy helper ---------- */
+  function copyText(text, btn) {
+    var label = btn.textContent;
+    function done(ok) {
+      btn.textContent = ok ? "Copied" : "Press and hold the text to copy";
+      setTimeout(function () { btn.textContent = label; }, 1800);
+    }
+    function fallback() {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+        var ok = document.execCommand("copy"); document.body.removeChild(ta); done(ok);
+      } catch (e) { done(false); }
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+  }
+
+  /* ---------- 1. Job search helper ---------- */
+  function enc(s) { return encodeURIComponent(s.trim()); }
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); }
+  function setLink(id, url, on) {
+    var a = $(id);
+    a.setAttribute("href", on ? url : "#search");
+    a.classList.toggle("is-off", !on);
+    a.setAttribute("aria-disabled", on ? "false" : "true");
+  }
+  function buildLinks() {
+    var role = $("s-role").value.trim(), city = $("s-city").value.trim();
+    var fresher = $("s-fresher").checked, week = $("s-week").checked, on = role.length > 0;
+    var li = "https://www.linkedin.com/jobs/search/?keywords=" + enc(role) + (city ? "&location=" + enc(city) : "") + (fresher ? "&f_E=2" : "") + (week ? "&f_TPR=r604800" : "");
+    var indeed = "https://in.indeed.com/jobs?q=" + enc(role + (fresher ? " fresher" : "")) + (city ? "&l=" + enc(city) : "") + (week ? "&fromage=7" : "");
+    var nq = []; if (fresher) nq.push("experience=0"); if (week) nq.push("jobAge=7");
+    var naukri = "https://www.naukri.com/" + slug(role) + "-jobs" + (city ? "-in-" + slug(city) : "") + (nq.length ? "?" + nq.join("&") : "");
+    var google = "https://www.google.com/search?q=" + enc((fresher ? "fresher " : "") + role + " jobs" + (city ? " in " + city : ""));
+    setLink("l-linkedin", li, on); setLink("l-indeed", indeed, on); setLink("l-naukri", naukri, on); setLink("l-google", google, on);
+    $("s-hint").textContent = on ? "Tap a button. The search opens in a new tab." : "Type a job title to turn the buttons on.";
+  }
+  ["s-role", "s-city"].forEach(function (id) { $(id).addEventListener("input", buildLinks); });
+  ["s-fresher", "s-week"].forEach(function (id) { $(id).addEventListener("change", buildLinks); });
+  $("s-links").addEventListener("click", function (e) {
+    var a = e.target.closest("a"); if (a && a.classList.contains("is-off")) e.preventDefault();
+  });
+  buildLinks();
+
+  /* ---------- 2. Resume checker ---------- */
+  var EXAMPLE_JOB = "Customer Support Executive (Fresher)\nWe are looking for a friendly Customer Support Executive to answer customer calls and emails, solve problems and keep records in our CRM.\nRequirements: good English communication, typing speed of 35 WPM, basic MS Excel, ability to work in shifts, teamwork and patience.\nFreshers can apply. You will handle customer queries, update tickets and escalate complex issues to senior team members.";
+  var EXAMPLE_RESUME = "Riya Sharma\nriya.sharma@example.com | +91 90000 00000 | Mumbai\n\nSummary\nB.Com graduate with good communication skills and basic MS Excel. Looking for a customer service role.\n\nSkills\nMS Excel, MS Word, typing speed 40 WPM, teamwork\n\nProjects\n- Organised college fest registrations for 300 students\n- Handled visitor questions at the help desk\n\nEducation\nB.Com, XYZ College, 2026, 72%";
+  $("r-job").value = EXAMPLE_JOB; $("r-resume").value = EXAMPLE_RESUME;
+
+  var STOP = new Set(("a an the and or but if so as of to in on at by for with from into over under about after before than then that this these those there here " +
+    "is are was were be been being am do does did done have has had having will would can could should may might must shall not no yes it its it's they them their theirs we our ours you your yours he she his her who whom whose which what when where why how " +
+    "all any each every both more most some such other another only own same very too just also well etc via per us job jobs role roles candidate candidates looking join joining team teams work working works worked " +
+    "responsibilities responsibility requirements requirement required require skills skill ability able strong good great knowledge experience experienced years year must including include includes new company apply applying application position opportunity opportunities " +
+    "keep keeps friendly answer answers important enter daily many much various related excellent best fast quick high large small little give take provide provides every always often sometimes " +
+    "responsible across within ensure ensuring help helping make making using use used like get getting need needs needed want wanted plus nice fresher freshers will candidate ideal etc one two three day days time week weeks month months senior junior executive").split(/\s+/));
+  var SHORT_OK = new Set(["hr", "qa", "ui", "ux", "ai", "ml", "bi", "pr", "it", "c", "r"]);
+  var VERBS = ["built", "created", "designed", "developed", "organised", "organized", "managed", "led", "coordinated", "planned", "improved", "increased", "reduced", "saved", "solved", "analysed", "analyzed", "researched", "tested", "presented", "trained", "supported", "wrote", "edited", "launched", "handled", "delivered", "automated", "collected", "prepared", "maintained", "taught", "assisted", "completed", "implemented", "conducted"];
+
+  function norm(w) { w = w.toLowerCase(); if (w.length > 4 && w.slice(-1) === "s" && w.slice(-2) !== "ss") w = w.slice(0, -1); return w; }
+  function tokens(text) {
+    return (text.toLowerCase().replace(/[^a-z0-9+#\s]/g, " ").match(/[a-z0-9+#]+/g) || []).filter(function (t) {
+      return (t.length >= 3 || SHORT_OK.has(t)) && !/^\d+$/.test(t);
+    });
+  }
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; }
+
+  function checkResume() {
+    var job = $("r-job").value, resume = $("r-resume").value;
+    var jt = tokens(job);
+    var res = $("r-result");
+    if (jt.length < 15) {
+      res.hidden = false;
+      $("r-num").textContent = "-"; $("r-lbl").textContent = "Paste the full job post (at least a few sentences) to see your result.";
+      $("r-bar").style.width = "0%"; $("r-ok").textContent = ""; $("r-miss").textContent = ""; $("r-ticks").textContent = "";
+      return;
+    }
+    var count = {}, first = {}, shown = {}, order = 0;
+    jt.forEach(function (t) {
+      var n = norm(t); if (STOP.has(n) || STOP.has(t)) return;
+      count[n] = (count[n] || 0) + 1; if (!(n in first)) { first[n] = order++; shown[n] = t; }
+    });
+    var keys = Object.keys(count).sort(function (a, b) { return count[b] - count[a] || first[a] - first[b]; }).slice(0, 20);
+    var rset = new Set(tokens(resume).map(norm));
+    var okW = keys.filter(function (k) { return rset.has(k); }), missW = keys.filter(function (k) { return !rset.has(k); });
+    var pct = keys.length ? Math.round(okW.length / keys.length * 100) : 0;
+    res.hidden = false;
+    $("r-num").textContent = pct + "%";
+    $("r-lbl").textContent = "of the " + keys.length + " main job words are in your resume";
+    $("r-bar").style.width = pct + "%";
+    var okUl = $("r-ok"), missUl = $("r-miss");
+    okUl.textContent = ""; missUl.textContent = "";
+    okW.forEach(function (k) { okUl.appendChild(el("li", "chip ok", shown[k])); });
+    missW.forEach(function (k) { missUl.appendChild(el("li", "chip miss", shown[k])); });
+    if (!okW.length) okUl.appendChild(el("li", "", "None yet"));
+    if (!missW.length) missUl.appendChild(el("li", "", "Nothing missing. Nice."));
+
+    var email = /[\w.+-]+@[\w-]+\.[\w.-]+/, phone = /(\+?\d[\d\s-]{8,}\d)/;
+    var words = (resume.match(/\S+/g) || []).length;
+    var stripped = resume.replace(new RegExp(email.source, "g"), " ").replace(new RegExp(phone.source, "g"), " ");
+    var nums = (stripped.match(/\b\d+(\.\d+)?%?/g) || []).length;
+    var lines = resume.split(/\n/).map(function (l) { return l.replace(/^[\s\-•*]+/, "").toLowerCase(); });
+    var verbLines = lines.filter(function (l) { var f = (l.match(/^[a-z]+/) || [""])[0]; return VERBS.indexOf(f) !== -1; }).length;
+    var checks = [
+      [email.test(resume), "Has an email address"],
+      [phone.test(resume), "Has a phone number"],
+      [nums >= 3, "Shows numbers or results (like 300 students, 72%)"],
+      [verbLines >= 3, "Starts at least 3 lines with action words (Built, Organised, Led)"],
+      [words >= 150 && words <= 700, "Good length: " + words + " words (aim for 150 to 700)"]
+    ];
+    var tk = $("r-ticks"); tk.textContent = "";
+    checks.forEach(function (c) { tk.appendChild(el("li", c[0] ? "pass" : "fail", c[1])); });
+  }
+  $("r-check").addEventListener("click", checkResume);
+  $("r-clear").addEventListener("click", function () {
+    $("r-job").value = ""; $("r-resume").value = ""; $("r-result").hidden = true; $("r-job").focus();
+  });
+  checkResume();
+
+  /* ---------- 3. Interview practice ---------- */
+  var BANK = [
+    ["About you", "Tell me about yourself.", "Use Present, Past, Future in 60 to 90 seconds. The builder below helps you write it."],
+    ["About you", "Why did you choose this field?", "Tell a short true story: a subject, project or moment that sparked your interest."],
+    ["About you", "What are your hobbies?", "Pick one or two real ones. If you can, link one to a skill, like teamwork or discipline."],
+    ["About you", "What motivates you?", "Say what really drives you, such as learning or solving problems, and give one example."],
+    ["Strengths and weaknesses", "What are your strengths?", "Pick two that fit the job. Give a short example for each."],
+    ["Strengths and weaknesses", "What is your weakness?", "Name a real, small weakness and say how you are fixing it. Avoid \"I work too hard\"."],
+    ["Strengths and weaknesses", "What was your biggest failure?", "Use a small, real failure. Spend most of the answer on what you changed afterwards."],
+    ["Strengths and weaknesses", "How do you handle pressure?", "Give one example: you made a plan, set priorities and asked for help when needed."],
+    ["The job and company", "Why should we hire you?", "Match two or three skills from the job post with real proof from a project or internship."],
+    ["The job and company", "Why do you want to work here?", "Mention one real thing about the company and link it to your own goal."],
+    ["The job and company", "What do you know about our company?", "Read their About page and one recent news item before the interview."],
+    ["The job and company", "Where do you see yourself in 5 years?", "Talk about skills you want to build and responsibility you want to earn, not a job title."],
+    ["The job and company", "Can you relocate or work in shifts?", "Answer honestly. If yes, say yes clearly. If it depends, say what it depends on."],
+    ["The job and company", "What are your salary expectations?", "Say you are open to the company's standard range and ask what it is. If pushed, give a range based on your research."],
+    ["The job and company", "How soon can you join?", "As a fresher, say how soon you can start, for example \"in two weeks\", only if it is true."],
+    ["The job and company", "Do you have any questions for us?", "Always say yes. Ask about a typical day, training for new joiners, and what success looks like in 3 months."],
+    ["Behaviour (use STAR)", "Tell me about a time you worked in a team and disagreed with someone.", "STAR: Situation, Task, Action, Result. Spend most of your time on what you did."],
+    ["Behaviour (use STAR)", "Tell me about a time you learned something new quickly.", "Say what it was, how you learned it step by step, and what you could do afterwards."],
+    ["Behaviour (use STAR)", "Tell me about a time you made a mistake or missed a deadline.", "Be honest. Say how you fixed it and what you changed so it did not happen again."],
+    ["Behaviour (use STAR)", "Tell me about a time you led a group.", "A college event, project or sports team is fine. Say how you shared the work and what the result was."],
+    ["Behaviour (use STAR)", "Tell me about a time you solved a hard problem.", "Explain the problem, the options you thought about, what you chose and why."],
+    ["Behaviour (use STAR)", "Tell me about a time you received criticism.", "Show you listen. Say what you heard, what you changed and how it helped."],
+    ["Behaviour (use STAR)", "Tell me about a time you managed many tasks at once.", "Describe how you listed tasks, chose priorities and finished on time."],
+    ["For freshers", "Tell me about your final-year project.", "Cover the problem, what you did, the tools you used, the result and what you learned. Keep it simple."],
+    ["For freshers", "Why is there a gap in your studies?", "Be honest and short. Say what you did in that time and that you are ready to work now."]
+  ];
+  var cats = ["All questions"].concat(BANK.map(function (b) { return b[0]; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
+  var sel = $("q-cat");
+  cats.forEach(function (c) { var o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o); });
+  var pool = [], idx = 0, current = null;
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function rebuildPool() {
+    var c = sel.value;
+    pool = shuffle(BANK.filter(function (b) { return c === "All questions" || b[0] === c; }));
+    if (pool.length && pool[0][1] === (current && current[1]) && pool.length > 1) pool.push(pool.shift());
+    idx = 0;
+  }
+  function showQuestion() {
+    if (!pool.length) rebuildPool();
+    if (idx >= pool.length) rebuildPool();
+    current = pool[idx++];
+    $("q-catlabel").textContent = current[0]; $("q-text").textContent = current[1];
+    $("q-tip").textContent = current[2]; $("q-tip").hidden = true; $("q-tipbtn").textContent = "Show how to answer";
+    resetTimer();
+  }
+  sel.addEventListener("change", function () { rebuildPool(); showQuestion(); });
+  $("q-next").addEventListener("click", showQuestion);
+  $("q-tipbtn").addEventListener("click", function () {
+    var t = $("q-tip"); t.hidden = !t.hidden; this.textContent = t.hidden ? "Show how to answer" : "Hide how to answer";
+  });
+
+  var secs = 0, handle = null;
+  function fmt(s) { return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+  function paintTimer() {
+    $("t-clock").textContent = fmt(secs);
+    $("t-msg").textContent = secs >= 120 ? "That is long. Try to finish within 90 seconds." : secs >= 90 ? "90 seconds. Time to wrap up." : secs > 0 ? "Keep going. Aim for 60 to 90 seconds." : "Press Start, then say your answer out loud.";
+  }
+  function resetTimer() { if (handle) { clearInterval(handle); handle = null; } secs = 0; $("t-start").textContent = "Start"; paintTimer(); }
+  $("t-start").addEventListener("click", function () {
+    if (handle) { clearInterval(handle); handle = null; this.textContent = "Start"; return; }
+    this.textContent = "Pause"; handle = setInterval(function () { secs++; paintTimer(); }, 1000);
+  });
+  $("t-reset").addEventListener("click", resetTimer);
+  rebuildPool(); showQuestion();
+
+  /* Tell-me-about-yourself builder */
+  function tidy(s) { return s.trim().replace(/[.\s]+$/, ""); }
+  function buildAnswer() {
+    var a = tidy($("b-now").value), b = tidy($("b-past").value), c = tidy($("b-next").value);
+    var out = $("b-out");
+    if (!a && !b && !c) { out.textContent = "Fill the three boxes above to see your answer here."; return ""; }
+    var parts = ["Hello, thank you for having me."];
+    if (a) parts.push("I have just completed " + a + ".");
+    if (b) parts.push("During my studies I " + b + ".");
+    if (c) parts.push("Now I am looking for " + c + ", where I can keep learning and add value to the team.");
+    var text = parts.join(" "); out.textContent = text; return text;
+  }
+  ["b-now", "b-past", "b-next"].forEach(function (id) { $(id).addEventListener("input", buildAnswer); });
+  $("b-copy").addEventListener("click", function () {
+    var t = buildAnswer(); if (t) copyText(t, this);
+  });
+})();
+</script>
+
+</body>
+</html>
