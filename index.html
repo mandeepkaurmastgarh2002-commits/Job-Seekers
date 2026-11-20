@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Layout concept: one narrow column built for a phone. A hero, a row of jump links, then three tool cards
+/* Layout concept: one narrow column built for a phone. A hero, a row of menu, then three tool cards
    (search, resume, interview) and a short FAQ. Teal accent on a cool grey ground, big tap targets, 16px inputs. */
 :root {
   --bg: #F4F6F8;
@@ -123,6 +123,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
   .linkgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .tool { padding: 26px 26px; }
 }
+
+.page { display: none; }
+.page.on { display: block; }
+.wrap { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+.cards { display: grid; gap: 12px; margin: 8px 0 24px; }
+.card { display: block; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--accent); color: var(--ink); text-decoration: none; min-height: 44px; }
+.card b { display: block; font-family: var(--font-display); font-size: 21px; font-weight: 800; margin-bottom: 4px; }
+.card span { color: var(--muted); font-size: 15px; }
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.tabs a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 58px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; }
+.tabs a i { font-style: normal; font-size: 20px; line-height: 1; }
+.tabs a.on { color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 
@@ -134,19 +146,28 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
 <div class="wrap">
   <div class="brand">First Job Helper</div>
 
+  <div class="page" data-page="home">
   <header class="hero">
     <h1>Free tools to help you get your first job</h1>
     <p>Search jobs faster, check your resume against a job post, and practise interview answers. No signup and no cost.</p>
     <p class="privacy">Everything you type stays on your phone. Nothing is sent or saved on our side.</p>
-    <ul class="jump" aria-label="Jump to a tool">
-      <li><a href="#search">Search jobs</a></li>
-      <li><a href="#resume">Check resume</a></li>
-      <li><a href="#interview">Practise interview</a></li>
-    </ul>
   </header>
+  <div class="cards">
+    <a class="card" href="#search" data-go="search"><b>Find jobs</b><span>Open LinkedIn, Naukri, Indeed and Google job searches with your job and city.</span></a>
+    <a class="card" href="#resume" data-go="resume"><b>Check my resume</b><span>See which words from a job post your resume is missing.</span></a>
+    <a class="card" href="#interview" data-go="interview"><b>Practise interview</b><span>25 common questions, a timer, and a "Tell me about yourself" helper.</span></a>
+  </div>
+  <section class="faq" aria-labelledby="faq-h">
+    <h2 id="faq-h">Questions</h2>
+    <details><summary>Is First Job Helper really free?</summary><p>Yes. There is no signup, no payment and no hidden fee.</p></details>
+    <details><summary>Do you save my resume?</summary><p>No. The resume checker runs inside your browser. What you type is not sent to any server and is gone when you close the page.</p></details>
+    <details><summary>Does it show real jobs?</summary><p>It opens the real search pages of LinkedIn, Naukri, Indeed and Google with your job and city filled in. The jobs you see come from those websites, not from here.</p></details>
+    <details><summary>Will these tools get me a job?</summary><p>No tool can promise that. They help you search faster, fix missing words in your resume and practise answers. Your results depend on how many good applications you send and how you do in interviews.</p></details>
+  </section>
+  </div>
 
   <main>
-  <section class="tool" id="search" aria-labelledby="search-h">
+  <section class="tool page" data-page="search" id="search" aria-labelledby="search-h">
     <h2 id="search-h">Job search helper</h2>
     <p class="lead">Type the job and the city. The buttons open the live search on each job site, already filled in.</p>
     <div class="row2">
@@ -169,7 +190,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
     <p class="note">These buttons open the search pages of other websites. First Job Helper does not list jobs itself. Always check a job is real. A real company never asks you to pay money to get a job.</p>
   </section>
 
-  <section class="tool" id="resume" aria-labelledby="resume-h">
+  <section class="tool page" data-page="resume" id="resume" aria-labelledby="resume-h">
     <h2 id="resume-h">Resume checker</h2>
     <p class="lead">Paste a job post and your resume text. See which important words from the job post your resume is missing.</p>
     <label class="field"><span>Job post</span>
@@ -194,7 +215,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
     </div>
   </section>
 
-  <section class="tool" id="interview" aria-labelledby="interview-h">
+  <section class="tool page" data-page="interview" id="interview" aria-labelledby="interview-h">
     <h2 id="interview-h">Interview practice</h2>
     <p class="lead">Get a question, say your answer out loud, and watch the timer. About 60 to 90 seconds is a good answer.</p>
     <label class="field"><span>Type of question</span>
@@ -230,13 +251,14 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
   </section>
   </main>
 
-  <section class="faq" aria-labelledby="faq-h">
-    <h2 id="faq-h">Questions</h2>
-    <details><summary>Is First Job Helper really free?</summary><p>Yes. There is no signup, no payment and no hidden fee.</p></details>
-    <details><summary>Do you save my resume?</summary><p>No. The resume checker runs inside your browser. What you type is not sent to any server and is gone when you close the page.</p></details>
-    <details><summary>Does it show real jobs?</summary><p>It opens the real search pages of LinkedIn, Naukri, Indeed and Google with your job and city filled in. The jobs you see come from those websites, not from here.</p></details>
-    <details><summary>Will these tools get me a job?</summary><p>No tool can promise that. They help you search faster, fix missing words in your resume and practise answers. Your results depend on how many good applications you send and how you do in interviews.</p></details>
-  </section>
+
+  <nav class="tabs" aria-label="Main menu">
+    <a href="#home" data-go="home"><i>&#8962;</i>Home</a>
+    <a href="#search" data-go="search"><i>&#9906;</i>Jobs</a>
+    <a href="#resume" data-go="resume"><i>&#9998;</i>Resume</a>
+    <a href="#interview" data-go="interview"><i>&#9743;</i>Practice</a>
+  </nav>
+  <noscript><style>.page{display:block!important}</style></noscript>
   <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman.</footer>
 </div>
 
@@ -244,6 +266,34 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
+
+
+  /* ---------- Menu: show one page at a time ---------- */
+  var pages = ["home", "search", "resume", "interview"];
+  function showPage(name, noScroll) {
+    if (pages.indexOf(name) < 0) name = "home";
+    var els = document.querySelectorAll(".page");
+    for (var i = 0; i < els.length; i++) els[i].classList.toggle("on", els[i].getAttribute("data-page") === name);
+    var links = document.querySelectorAll(".tabs a");
+    for (var j = 0; j < links.length; j++) {
+      var on = links[j].getAttribute("data-go") === name;
+      links[j].classList.toggle("on", on);
+      if (on) links[j].setAttribute("aria-current", "page"); else links[j].removeAttribute("aria-current");
+    }
+    if (!noScroll) window.scrollTo(0, 0);
+  }
+  var gos = document.querySelectorAll("[data-go]");
+  for (var g = 0; g < gos.length; g++) {
+    gos[g].addEventListener("click", function (e) {
+      e.preventDefault();
+      var n = this.getAttribute("data-go");
+      try { history.pushState(null, "", "#" + n); } catch (x) { location.hash = n; }
+      showPage(n);
+    });
+  }
+  window.addEventListener("popstate", function () { showPage(location.hash.replace("#", ""), true); });
+  window.addEventListener("hashchange", function () { showPage(location.hash.replace("#", "")); });
+  showPage(location.hash.replace("#", ""), true);
 
   /* ---------- Copy helper ---------- */
   function copyText(text, btn) {
