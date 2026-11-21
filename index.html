@@ -135,6 +135,18 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
 .tabs a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 58px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; }
 .tabs a i { font-style: normal; font-size: 20px; line-height: 1; }
 .tabs a.on { color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
+
+.tabs { grid-template-columns: repeat(5, 1fr); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0 18px; }
+#workpath h3 { font-family: var(--font-display); font-weight: 800; font-size: 19px; margin: 18px 0 8px; }
+.steps { padding-left: 22px; margin: 0 0 8px; color: var(--ink); }
+.steps li { margin-bottom: 8px; }
+select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding: 8px 10px; box-sizing: border-box; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 4px; }
+.pcard { background: var(--soft); border: 1px solid var(--line); padding: 12px; margin: 12px 0; }
+.pcard b { display: block; font-size: 17px; }
+.pcard span { display: block; color: var(--muted); font-size: 15px; }
+.pcard em { font-style: normal; font-size: 12px; font-weight: 600; color: var(--miss); background: var(--miss-bg); padding: 2px 6px; margin-left: 6px; }
+.vid { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; background: var(--off); color: var(--on-off); font-size: 14px; font-weight: 600; margin-bottom: 8px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 
@@ -156,6 +168,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
     <a class="card" href="#search" data-go="search"><b>Find jobs</b><span>Open LinkedIn, Naukri, Indeed and Google job searches with your job and city.</span></a>
     <a class="card" href="#resume" data-go="resume"><b>Check my resume</b><span>See which words from a job post your resume is missing.</span></a>
     <a class="card" href="#interview" data-go="interview"><b>Practise interview</b><span>25 common questions, a timer, and a "Tell me about yourself" helper.</span></a>
+    <a class="card" href="#workpath" data-go="workpath"><b>Work Path Go (coming soon)</b><span>Workers show their skill in a short video. Bosses find them. Read the video guide now.</span></a>
   </div>
   <section class="faq" aria-labelledby="faq-h">
     <h2 id="faq-h">Questions</h2>
@@ -249,6 +262,47 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
       <button class="btn" type="button" id="b-copy">Copy answer</button>
     </div>
   </section>
+  <section class="tool page" data-page="workpath" id="workpath" aria-labelledby="wp-h">
+    <h2 id="wp-h">Work Path Go</h2>
+    <p class="lead">Show your skill in a short video instead of a long resume. Bosses watch it and contact you. This part is being built step by step. Sign up is not open yet.</p>
+    <div class="seg" role="tablist" aria-label="Choose your side">
+      <button type="button" class="btn" id="wp-b-worker" data-wp="worker">I am a worker</button>
+      <button type="button" class="btn alt" id="wp-b-boss" data-wp="boss">I need a worker</button>
+    </div>
+
+    <div id="wp-worker">
+      <h3>Make your skill video</h3>
+      <ol class="steps">
+        <li><b>Keep it short.</b> 30 to 60 seconds is enough.</li>
+        <li><b>Use good light.</b> Film near a window or a bright lamp. Hold the phone sideways.</li>
+        <li><b>Say 3 things:</b> your first name, your skill, and how many years you have done it.</li>
+        <li><b>Show your work.</b> Show the tools and one real thing you made or fixed.</li>
+        <li><b>Do not say your phone number</b> or address in the video. You will add contact details separately.</li>
+      </ol>
+      <h3>Your profile (preview)</h3>
+      <p class="hint">This form does not save anything yet. It shows what your profile will ask for.</p>
+      <label class="field"><span>First name</span><input type="text" id="wp-name" placeholder="e.g. Ravi" autocomplete="off"></label>
+      <label class="field"><span>Your skill</span>
+        <select id="wp-cat"><option>Electrician</option><option>Plumber</option><option>Driver</option><option>Cook</option><option>Tailor</option><option>Carpenter</option><option>Painter</option><option>Delivery or helper</option><option>Shop or sales</option><option>Office or computer work</option><option>Other</option></select></label>
+      <label class="field"><span>City</span><input type="text" id="wp-city" placeholder="e.g. Pune" autocomplete="off"></label>
+      <label class="field"><span>Years of experience</span>
+        <select id="wp-exp"><option>Less than 1 year</option><option>1 to 3 years</option><option>3 to 5 years</option><option>More than 5 years</option></select></label>
+      <div class="field"><span class="field-label">Skill video</span><button class="btn alt" type="button" disabled>Upload video (opens soon)</button></div>
+      <div class="pcard" id="wp-preview" aria-live="polite"></div>
+      <p class="hint">Safety: only share contact details with a boss you trust. A real employer never asks you to pay money to get a job.</p>
+    </div>
+
+    <div id="wp-boss" hidden>
+      <h3>Find a worker</h3>
+      <p class="hint">Bosses will filter by skill and city, watch the video, and then contact the worker. The list below is only an <b>example</b> of how it will look. These are not real people.</p>
+      <div class="row2">
+        <label class="field"><span>Skill</span><select id="wp-f-cat"><option value="">All skills</option></select></label>
+        <label class="field"><span>City</span><input type="text" id="wp-f-city" placeholder="Any city" autocomplete="off"></label>
+      </div>
+      <div id="wp-list"></div>
+      <p class="hint" id="wp-none" hidden>No example matches. Try another skill or city.</p>
+    </div>
+  </section>
   </main>
 
 
@@ -257,6 +311,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
     <a href="#search" data-go="search"><i>&#9906;</i>Jobs</a>
     <a href="#resume" data-go="resume"><i>&#9998;</i>Resume</a>
     <a href="#interview" data-go="interview"><i>&#9743;</i>Practice</a>
+    <a href="#workpath" data-go="workpath"><i>&#9654;</i>Work</a>
   </nav>
   <noscript><style>.page{display:block!important}</style></noscript>
   <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman.</footer>
@@ -269,7 +324,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
 
 
   /* ---------- Menu: show one page at a time ---------- */
-  var pages = ["home", "search", "resume", "interview"];
+  var pages = ["home", "search", "resume", "interview", "workpath"];
   function showPage(name, noScroll) {
     if (pages.indexOf(name) < 0) name = "home";
     var els = document.querySelectorAll(".page");
@@ -294,6 +349,48 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
   window.addEventListener("popstate", function () { showPage(location.hash.replace("#", ""), true); });
   window.addEventListener("hashchange", function () { showPage(location.hash.replace("#", "")); });
   showPage(location.hash.replace("#", ""), true);
+
+
+  /* ---------- Work Path Go (design preview, nothing is saved) ---------- */
+  var SAMPLES = [
+    { n: "Example A", c: "Electrician", city: "Pune", e: "3 to 5 years", t: "Home wiring and repair" },
+    { n: "Example B", c: "Tailor", city: "Mumbai", e: "More than 5 years", t: "Blouse and kurta stitching" },
+    { n: "Example C", c: "Driver", city: "Delhi", e: "1 to 3 years", t: "Car driver with a licence" },
+    { n: "Example D", c: "Cook", city: "Pune", e: "1 to 3 years", t: "North Indian home cooking" },
+    { n: "Example E", c: "Plumber", city: "Mumbai", e: "Less than 1 year", t: "Pipe fitting and leak repair" }
+  ];
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]; }); }
+  function wpSide(side) {
+    $("wp-worker").hidden = side !== "worker"; $("wp-boss").hidden = side !== "boss";
+    $("wp-b-worker").className = "btn" + (side === "worker" ? "" : " alt");
+    $("wp-b-boss").className = "btn" + (side === "boss" ? "" : " alt");
+  }
+  var wpBtns = document.querySelectorAll("[data-wp]");
+  for (var w = 0; w < wpBtns.length; w++) wpBtns[w].addEventListener("click", function () { wpSide(this.getAttribute("data-wp")); });
+  function wpPreview() {
+    var name = $("wp-name").value.trim() || "Your name", city = $("wp-city").value.trim() || "Your city";
+    $("wp-preview").innerHTML = '<div class="vid" aria-hidden="true">&#9654; Your video will show here</div><b>' + esc(name) + '</b><span>' + esc($("wp-cat").value) + ' &middot; ' + esc(city) + ' &middot; ' + esc($("wp-exp").value) + '</span>';
+  }
+  ["wp-name", "wp-city"].forEach(function (id) { $(id).addEventListener("input", wpPreview); });
+  ["wp-cat", "wp-exp"].forEach(function (id) { $(id).addEventListener("change", wpPreview); });
+  wpPreview();
+  (function () {
+    var cats = {}, sel = $("wp-f-cat");
+    SAMPLES.forEach(function (s) { cats[s.c] = 1; });
+    Object.keys(cats).sort().forEach(function (c) { var o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o); });
+  })();
+  function wpList() {
+    var cat = $("wp-f-cat").value, city = $("wp-f-city").value.trim().toLowerCase(), out = "", n = 0;
+    SAMPLES.forEach(function (s) {
+      if (cat && s.c !== cat) return;
+      if (city && s.city.toLowerCase().indexOf(city) < 0) return;
+      n++;
+      out += '<div class="pcard"><div class="vid" aria-hidden="true">&#9654; Example video</div><b>' + esc(s.n) + ' <em>Example only</em></b><span>' + esc(s.c) + ' &middot; ' + esc(s.city) + ' &middot; ' + esc(s.e) + '</span><span>' + esc(s.t) + '</span></div>';
+    });
+    $("wp-list").innerHTML = out; $("wp-none").hidden = n > 0;
+  }
+  $("wp-f-cat").addEventListener("change", wpList); $("wp-f-city").addEventListener("input", wpList);
+  wpList();
 
   /* ---------- Copy helper ---------- */
   function copyText(text, btn) {
@@ -506,3 +603,4 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
 
 </body>
 </html>
+
