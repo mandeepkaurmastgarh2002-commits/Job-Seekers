@@ -67,7 +67,7 @@ body {
 .tool .lead { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
 .field { display: block; margin-bottom: 12px; }
 .field > span, .field-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-input[type="text"], textarea, select { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 12px; }
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], textarea, select { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 12px; }
 textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
 input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-visible, .jump a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .checks { display: grid; gap: 4px; margin: 4px 0 14px; }
@@ -147,6 +147,21 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
 .pcard span { display: block; color: var(--muted); font-size: 15px; }
 .pcard em { font-style: normal; font-size: 12px; font-weight: 600; color: var(--miss); background: var(--miss-bg); padding: 2px 6px; margin-left: 6px; }
 .vid { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; background: var(--off); color: var(--on-off); font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.acct { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--soft); border: 1px solid var(--line); padding: 8px 12px; margin: 0 0 12px; font-size: 15px; }
+.acct span { overflow-wrap: anywhere; }
+.btn.small { min-height: 40px; padding: 6px 12px; font-size: 15px; flex: none; }
+.msg { margin: 0 0 12px; padding: 10px 12px; font-size: 15px; font-weight: 600; border: 1px solid var(--line); }
+.msg.ok { background: var(--ok-bg); color: var(--ok); }
+.msg.err { background: var(--miss-bg); color: var(--miss); }
+.box { border: 1px solid var(--line); background: var(--surface); padding: 12px; margin: 0 0 14px; }
+.box h3 { margin-top: 0 !important; }
+.bar { height: 10px; background: var(--off); margin: 0 0 10px; }
+#wp-barfill { height: 100%; width: 0; background: var(--accent); }
+#wp-about { min-height: 90px; }
+#workpath video { width: 100%; max-height: 60vh; background: #000; margin: 0 0 10px; }
+.pcard .ph { display: block; margin-top: 8px; }
+.pcard .ph a { display: inline-block; margin-right: 8px; }
+[hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 
@@ -168,7 +183,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     <a class="card" href="#search" data-go="search"><b>Find jobs</b><span>Open LinkedIn, Naukri, Indeed and Google job searches with your job and city.</span></a>
     <a class="card" href="#resume" data-go="resume"><b>Check my resume</b><span>See which words from a job post your resume is missing.</span></a>
     <a class="card" href="#interview" data-go="interview"><b>Practise interview</b><span>25 common questions, a timer, and a "Tell me about yourself" helper.</span></a>
-    <a class="card" href="#workpath" data-go="workpath"><b>Work Path Go (coming soon)</b><span>Workers show their skill in a short video. Bosses find them. Read the video guide now.</span></a>
+    <a class="card" href="#workpath" data-go="workpath"><b>Work Path Go (test)</b><span>Workers show their skill in a short video. Bosses find them. Read the video guide now.</span></a>
   </div>
   <section class="faq" aria-labelledby="faq-h">
     <h2 id="faq-h">Questions</h2>
@@ -264,43 +279,79 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
   </section>
   <section class="tool page" data-page="workpath" id="workpath" aria-labelledby="wp-h">
     <h2 id="wp-h">Work Path Go</h2>
-    <p class="lead">Show your skill in a short video instead of a long resume. Bosses watch it and contact you. This part is being built step by step. Sign up is not open yet.</p>
+    <p class="lead">Show your skill in a short video instead of a long resume. Bosses watch it and contact you. This is a test version. Share only what you are comfortable with.</p>
+    <div class="acct" id="wp-acct" hidden><span id="wp-acct-text"></span><button class="btn alt small" type="button" id="wp-logout">Log out</button></div>
+    <p class="msg" id="wp-msg" role="status" aria-live="polite" hidden></p>
     <div class="seg" role="tablist" aria-label="Choose your side">
       <button type="button" class="btn" id="wp-b-worker" data-wp="worker">I am a worker</button>
       <button type="button" class="btn alt" id="wp-b-boss" data-wp="boss">I need a worker</button>
     </div>
 
+    <div id="wp-auth" class="box">
+      <h3>Sign up or log in</h3>
+      <label class="field"><span>Email</span><input type="email" id="wp-email" autocomplete="email" inputmode="email" autocapitalize="none" placeholder="you@example.com"></label>
+      <label class="field"><span>Password (at least 6 letters)</span><input type="password" id="wp-pass" autocomplete="current-password" placeholder="Your password"></label>
+      <label class="field"><span>For sign up: I am a</span>
+        <select id="wp-role"><option value="worker">Worker (I want a job)</option><option value="boss">Boss (I need a worker)</option></select></label>
+      <div class="seg">
+        <button class="btn" type="button" id="wp-signup">Sign up</button>
+        <button class="btn alt" type="button" id="wp-login">Log in</button>
+      </div>
+      <p class="hint">Use an email you can open. Never use a password from another website.</p>
+    </div>
+
+    <div id="wp-rolebox" class="box" hidden>
+      <h3>Choose your side</h3>
+      <p class="hint">Pick once. You cannot change it later.</p>
+      <div class="seg">
+        <button class="btn" type="button" data-setrole="worker">I am a worker</button>
+        <button class="btn alt" type="button" data-setrole="boss">I am a boss</button>
+      </div>
+    </div>
+
     <div id="wp-worker">
       <h3>Make your skill video</h3>
       <ol class="steps">
-        <li><b>Keep it short.</b> 30 to 60 seconds is enough.</li>
-        <li><b>Use good light.</b> Film near a window or a bright lamp. Hold the phone sideways.</li>
+        <li><b>Keep it short.</b> 30 seconds is best. The limit is 50 MB.</li>
+        <li><b>Use 720p.</b> On iPhone: Settings, Camera, Record Video, 720p HD.</li>
+        <li><b>Use good light.</b> Film near a window. Hold the phone sideways.</li>
         <li><b>Say 3 things:</b> your first name, your skill, and how many years you have done it.</li>
         <li><b>Show your work.</b> Show the tools and one real thing you made or fixed.</li>
-        <li><b>Do not say your phone number</b> or address in the video. You will add contact details separately.</li>
+        <li><b>Do not say your phone number</b> or address in the video.</li>
       </ol>
-      <h3>Your profile (preview)</h3>
-      <p class="hint">This form does not save anything yet. It shows what your profile will ask for.</p>
-      <label class="field"><span>First name</span><input type="text" id="wp-name" placeholder="e.g. Ravi" autocomplete="off"></label>
-      <label class="field"><span>Your skill</span>
-        <select id="wp-cat"><option>Electrician</option><option>Plumber</option><option>Driver</option><option>Cook</option><option>Tailor</option><option>Carpenter</option><option>Painter</option><option>Delivery or helper</option><option>Shop or sales</option><option>Office or computer work</option><option>Other</option></select></label>
-      <label class="field"><span>City</span><input type="text" id="wp-city" placeholder="e.g. Pune" autocomplete="off"></label>
-      <label class="field"><span>Years of experience</span>
-        <select id="wp-exp"><option>Less than 1 year</option><option>1 to 3 years</option><option>3 to 5 years</option><option>More than 5 years</option></select></label>
-      <div class="field"><span class="field-label">Skill video</span><button class="btn alt" type="button" disabled>Upload video (opens soon)</button></div>
-      <div class="pcard" id="wp-preview" aria-live="polite"></div>
-      <p class="hint">Safety: only share contact details with a boss you trust. A real employer never asks you to pay money to get a job.</p>
+      <p class="hint" id="wp-wrongrole" hidden>You are logged in as a boss. Use a worker account to make a card.</p>
+      <div id="wp-editor" hidden>
+        <h3>Your profile</h3>
+        <label class="field"><span>First name</span><input type="text" id="wp-name" maxlength="40" autocomplete="given-name" placeholder="e.g. Ravi"></label>
+        <label class="field"><span>Your skill</span><select id="wp-cat"></select></label>
+        <label class="field"><span>City</span><input type="text" id="wp-city" maxlength="60" autocomplete="off" placeholder="e.g. Pune"></label>
+        <label class="field"><span>Years of experience</span>
+          <select id="wp-exp"><option>Less than 1 year</option><option>1 to 3 years</option><option>3 to 5 years</option><option>More than 5 years</option></select></label>
+        <label class="field"><span>About your work (short)</span><textarea id="wp-about" maxlength="300" placeholder="e.g. I do home wiring and repair."></textarea></label>
+        <label class="field"><span>Phone number (only logged-in bosses can see it)</span><input type="tel" id="wp-phone" inputmode="tel" autocomplete="tel" placeholder="e.g. 9876543210"></label>
+        <label class="check"><input type="checkbox" id="wp-public"> Show my card to bosses</label>
+        <button class="btn" type="button" id="wp-save">Save my profile</button>
+        <h3>Your skill video</h3>
+        <video id="wp-myvideo" controls playsinline preload="metadata" hidden></video>
+        <label class="field"><span>Choose a video</span><input type="file" id="wp-file" accept="video/*"></label>
+        <div class="bar" id="wp-bar" hidden><div id="wp-barfill"></div></div>
+        <button class="btn alt" type="button" id="wp-upload">Upload video</button>
+        <p class="hint">Save your profile first, then upload. Turn on "Show my card to bosses" when your video is ready.</p>
+        <div class="pcard" id="wp-preview" aria-live="polite"></div>
+      </div>
+      <p class="hint">Safety: a real employer never asks you to pay money to get a job. Share contact details only with people you trust.</p>
     </div>
 
     <div id="wp-boss" hidden>
       <h3>Find a worker</h3>
-      <p class="hint">Bosses will filter by skill and city, watch the video, and then contact the worker. The list below is only an <b>example</b> of how it will look. These are not real people.</p>
       <div class="row2">
         <label class="field"><span>Skill</span><select id="wp-f-cat"><option value="">All skills</option></select></label>
         <label class="field"><span>City</span><input type="text" id="wp-f-city" placeholder="Any city" autocomplete="off"></label>
       </div>
+      <p class="hint" id="wp-listnote"></p>
       <div id="wp-list"></div>
-      <p class="hint" id="wp-none" hidden>No example matches. Try another skill or city.</p>
+      <p class="hint" id="wp-none" hidden>No match. Try another skill or city.</p>
+      <p class="hint">Phone numbers are shown only to logged-in boss accounts. Check a worker's skill yourself before you hire.</p>
     </div>
   </section>
   </main>
@@ -336,6 +387,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       if (on) links[j].setAttribute("aria-current", "page"); else links[j].removeAttribute("aria-current");
     }
     if (!noScroll) window.scrollTo(0, 0);
+    if (name === "workpath" && typeof window.__wpEnter === "function") window.__wpEnter();
   }
   var gos = document.querySelectorAll("[data-go]");
   for (var g = 0; g < gos.length; g++) {
@@ -351,46 +403,276 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
   showPage(location.hash.replace("#", ""), true);
 
 
-  /* ---------- Work Path Go (design preview, nothing is saved) ---------- */
+  /* ---------- Work Path Go (Supabase) ---------- */
+  var SUPA = "https://csbnlksistxaqshxmhcx.supabase.co";
+  var KEY = "sb_publishable_7o3os6F1eWUDna7PXq5vYg_uXk_7uTM";
+  var MAXVID = 52428800;
+  var SKILLS = ["Electrician", "Plumber", "Driver", "Cook", "Tailor", "Carpenter", "Painter", "Delivery or helper", "Shop or sales", "Office or computer work", "Other"];
   var SAMPLES = [
     { n: "Example A", c: "Electrician", city: "Pune", e: "3 to 5 years", t: "Home wiring and repair" },
     { n: "Example B", c: "Tailor", city: "Mumbai", e: "More than 5 years", t: "Blouse and kurta stitching" },
-    { n: "Example C", c: "Driver", city: "Delhi", e: "1 to 3 years", t: "Car driver with a licence" },
-    { n: "Example D", c: "Cook", city: "Pune", e: "1 to 3 years", t: "North Indian home cooking" },
-    { n: "Example E", c: "Plumber", city: "Mumbai", e: "Less than 1 year", t: "Pipe fitting and leak repair" }
+    { n: "Example C", c: "Driver", city: "Delhi", e: "1 to 3 years", t: "Car driver with a licence" }
   ];
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]; }); }
-  function wpSide(side) {
-    $("wp-worker").hidden = side !== "worker"; $("wp-boss").hidden = side !== "boss";
+  var sess = null, role = null, side = "worker", real = null, mine = null, busy = false;
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]; }); }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function nowSec() { return Math.floor(Date.now() / 1000); }
+
+  function say(text, kind) {
+    var m = $("wp-msg");
+    if (!text) { m.hidden = true; return; }
+    m.textContent = text; m.className = "msg " + (kind || "ok"); m.hidden = false;
+    try { m.scrollIntoView({ block: "nearest" }); } catch (e) {}
+  }
+  function friendly(e) {
+    var m = String((e && e.message) || e || "");
+    if (/invalid login/i.test(m)) return "Email or password is wrong.";
+    if (/already registered|already been registered/i.test(m)) return "This email is already used. Tap Log in.";
+    if (/at least 6|weak/i.test(m)) return "Password must be at least 6 letters.";
+    if (/rate limit|too many|429/i.test(m)) return "Too many tries. Please wait a few minutes.";
+    if (/valid email|invalid email|unable to validate email/i.test(m)) return "Please type a correct email.";
+    if (/failed to fetch|network|load failed/i.test(m)) return "No internet, or the server did not answer. Try again.";
+    if (/row-level security|violates/i.test(m)) return "Not allowed. Please log in again.";
+    return "Something went wrong: " + m;
+  }
+
+  function loadSess() { try { sess = JSON.parse(lsGet("wpg_session") || "null"); } catch (e) { sess = null; } }
+  function saveSess(s) { sess = s; lsSet("wpg_session", s ? JSON.stringify(s) : null); }
+  function toSess(d) {
+    if (!d || !d.access_token || !d.user) return null;
+    return { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: d.expires_at || (nowSec() + (d.expires_in || 3600)), user: { id: d.user.id, email: d.user.email } };
+  }
+  function parseRes(r) {
+    return r.text().then(function (t) {
+      var d = null; try { d = t ? JSON.parse(t) : null; } catch (e) {}
+      if (!r.ok) {
+        var err = new Error((d && (d.msg || d.message || d.error_description || d.error)) || ("Error " + r.status));
+        err.status = r.status; throw err;
+      }
+      return d;
+    });
+  }
+  function authCall(path, body) {
+    return fetch(SUPA + path, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(parseRes);
+  }
+  function ensureFresh() {
+    if (!sess || sess.expires_at - nowSec() > 60) return Promise.resolve();
+    return authCall("/auth/v1/token?grant_type=refresh_token", { refresh_token: sess.refresh_token })
+      .then(function (d) { var s = toSess(d); saveSess(s); })
+      .catch(function () { saveSess(null); role = null; });
+  }
+  function api(method, path, opts) {
+    opts = opts || {};
+    return ensureFresh().then(function () {
+      var h = { apikey: KEY };
+      if (sess) h.Authorization = "Bearer " + sess.access_token;
+      if (opts.json !== undefined) h["Content-Type"] = "application/json";
+      if (opts.prefer) h.Prefer = opts.prefer;
+      return fetch(SUPA + path, { method: method, headers: h, body: opts.json !== undefined ? JSON.stringify(opts.json) : undefined });
+    }).then(parseRes);
+  }
+
+  function cleanPhone(p) { return String(p || "").replace(/[^0-9]/g, ""); }
+  function videoUrl(path) {
+    if (!/^[0-9a-f-]{36}\/[A-Za-z0-9._-]{1,80}$/i.test(path || "")) return "";
+    return SUPA + "/storage/v1/object/public/skill-videos/" + path;
+  }
+
+  /* ----- show / hide parts of the page ----- */
+  function render() {
+    var logged = !!sess;
+    $("wp-acct").hidden = !logged;
+    if (logged) $("wp-acct-text").textContent = sess.user.email + (role ? " (" + role + ")" : "");
+    $("wp-auth").hidden = logged;
+    $("wp-rolebox").hidden = !(logged && !role);
+    $("wp-worker").hidden = side !== "worker";
+    $("wp-boss").hidden = side !== "boss";
     $("wp-b-worker").className = "btn" + (side === "worker" ? "" : " alt");
     $("wp-b-boss").className = "btn" + (side === "boss" ? "" : " alt");
+    $("wp-wrongrole").hidden = !(logged && role === "boss");
+    $("wp-editor").hidden = !(logged && role === "worker");
   }
-  var wpBtns = document.querySelectorAll("[data-wp]");
-  for (var w = 0; w < wpBtns.length; w++) wpBtns[w].addEventListener("click", function () { wpSide(this.getAttribute("data-wp")); });
-  function wpPreview() {
+  function afterLogin() {
+    return api("GET", "/rest/v1/profiles?id=eq." + sess.user.id + "&select=role").then(function (rows) {
+      role = rows && rows[0] ? rows[0].role : null;
+      var wanted = lsGet("wpg_role");
+      if (!role && (wanted === "worker" || wanted === "boss")) return setRole(wanted);
+    }).then(function () {
+      if (role === "boss") side = "boss";
+      render();
+      if (role === "boss") loadList();
+      if (role === "worker") return loadMine();
+    });
+  }
+  function setRole(r) {
+    return api("POST", "/rest/v1/profiles", { json: { id: sess.user.id, role: r }, prefer: "return=minimal" }).then(function () { role = r; lsSet("wpg_role", null); render(); if (r === "worker") return loadMine(); });
+  }
+
+  /* ----- sign up, log in, log out ----- */
+  function creds() {
+    var email = $("wp-email").value.trim(), pass = $("wp-pass").value;
+    if (!/^\S+@\S+\.\S+$/.test(email)) { say("Please type a correct email.", "err"); return null; }
+    if (pass.length < 6) { say("Password must be at least 6 letters.", "err"); return null; }
+    return { email: email, password: pass };
+  }
+  function lock(on) { busy = on; ["wp-signup", "wp-login", "wp-save", "wp-upload"].forEach(function (id) { $(id).disabled = on; }); }
+  $("wp-signup").addEventListener("click", function () {
+    var c = creds(); if (!c || busy) return;
+    lock(true); say("Please wait...", "ok");
+    lsSet("wpg_role", $("wp-role").value);
+    authCall("/auth/v1/signup", c).then(function (d) {
+      if (d && d.access_token) { saveSess(toSess(d)); say("Welcome! Your account is ready.", "ok"); return afterLogin(); }
+      say("Check your email and tap the link. Then come back and tap Log in.", "ok");
+    }).catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); render(); });
+  });
+  $("wp-login").addEventListener("click", function () {
+    var c = creds(); if (!c || busy) return;
+    lock(true); say("Please wait...", "ok");
+    authCall("/auth/v1/token?grant_type=password", c).then(function (d) {
+      saveSess(toSess(d)); say("You are logged in.", "ok"); return afterLogin();
+    }).catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); render(); });
+  });
+  $("wp-logout").addEventListener("click", function () {
+    var tok = sess && sess.access_token;
+    saveSess(null); role = null; mine = null; $("wp-pass").value = "";
+    if (tok) fetch(SUPA + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + tok } }).catch(function () {});
+    say("You are logged out.", "ok"); render();
+  });
+  var rb = document.querySelectorAll("[data-setrole]");
+  for (var q = 0; q < rb.length; q++) rb[q].addEventListener("click", function () {
+    var r = this.getAttribute("data-setrole"); lock(true);
+    setRole(r).catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); render(); });
+  });
+  var sb = document.querySelectorAll("[data-wp]");
+  for (var w = 0; w < sb.length; w++) sb[w].addEventListener("click", function () { side = this.getAttribute("data-wp"); render(); if (side === "boss") loadList(); });
+
+  /* ----- worker: profile and video ----- */
+  function fillSelects() {
+    var a = $("wp-cat"), b = $("wp-f-cat");
+    SKILLS.forEach(function (s) {
+      var o = document.createElement("option"); o.textContent = s; a.appendChild(o);
+      var p = document.createElement("option"); p.value = s; p.textContent = s; b.appendChild(p);
+    });
+  }
+  function showMyVideo() {
+    var v = $("wp-myvideo"), u = mine && videoUrl(mine.video_path);
+    if (u) { v.src = u; v.hidden = false; } else { v.removeAttribute("src"); v.hidden = true; }
+  }
+  function preview() {
     var name = $("wp-name").value.trim() || "Your name", city = $("wp-city").value.trim() || "Your city";
-    $("wp-preview").innerHTML = '<div class="vid" aria-hidden="true">&#9654; Your video will show here</div><b>' + esc(name) + '</b><span>' + esc($("wp-cat").value) + ' &middot; ' + esc(city) + ' &middot; ' + esc($("wp-exp").value) + '</span>';
+    $("wp-preview").innerHTML = '<div class="vid" aria-hidden="true">How your card looks</div><b>' + esc(name) + '</b><span>' + esc($("wp-cat").value) + ' &middot; ' + esc(city) + ' &middot; ' + esc($("wp-exp").value) + '</span><span>' + esc($("wp-about").value) + '</span>';
   }
-  ["wp-name", "wp-city"].forEach(function (id) { $(id).addEventListener("input", wpPreview); });
-  ["wp-cat", "wp-exp"].forEach(function (id) { $(id).addEventListener("change", wpPreview); });
-  wpPreview();
-  (function () {
-    var cats = {}, sel = $("wp-f-cat");
-    SAMPLES.forEach(function (s) { cats[s.c] = 1; });
-    Object.keys(cats).sort().forEach(function (c) { var o = document.createElement("option"); o.value = c; o.textContent = c; sel.appendChild(o); });
-  })();
-  function wpList() {
+  function loadMine() {
+    var id = sess.user.id;
+    return Promise.all([
+      api("GET", "/rest/v1/worker_profiles?id=eq." + id + "&select=*"),
+      api("GET", "/rest/v1/worker_contacts?id=eq." + id + "&select=phone")
+    ]).then(function (r) {
+      mine = r[0] && r[0][0] ? r[0][0] : null;
+      var c = r[1] && r[1][0] ? r[1][0] : null;
+      if (mine) {
+        $("wp-name").value = mine.first_name || ""; $("wp-cat").value = mine.skill || SKILLS[0]; $("wp-city").value = mine.city || "";
+        if (mine.experience) $("wp-exp").value = mine.experience;
+        $("wp-about").value = mine.about || ""; $("wp-public").checked = !!mine.is_public;
+      }
+      $("wp-phone").value = c ? c.phone : "";
+      showMyVideo(); preview();
+    }).catch(function (e) { say(friendly(e), "err"); });
+  }
+  $("wp-save").addEventListener("click", function () {
+    if (busy || !sess || role !== "worker") return;
+    var name = $("wp-name").value.trim(), city = $("wp-city").value.trim(), phone = cleanPhone($("wp-phone").value);
+    if (!name) { say("Please type your first name.", "err"); return; }
+    if (!city) { say("Please type your city.", "err"); return; }
+    if (phone.length < 10 || phone.length > 15) { say("Please type a correct phone number (10 to 15 digits).", "err"); return; }
+    var pub = $("wp-public").checked;
+    if (pub && !(mine && mine.video_path)) { say("Upload your video first, then turn on 'Show my card to bosses'.", "err"); return; }
+    lock(true); say("Saving...", "ok");
+    var id = sess.user.id;
+    api("POST", "/rest/v1/worker_profiles?on_conflict=id", { json: { id: id, first_name: name, skill: $("wp-cat").value, city: city, experience: $("wp-exp").value, about: $("wp-about").value.trim(), is_public: pub }, prefer: "resolution=merge-duplicates,return=minimal" })
+      .then(function () { return api("POST", "/rest/v1/worker_contacts?on_conflict=id", { json: { id: id, phone: phone }, prefer: "resolution=merge-duplicates,return=minimal" }); })
+      .then(function () { say("Saved.", "ok"); return loadMine(); })
+      .catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); });
+  });
+  $("wp-upload").addEventListener("click", function () {
+    if (busy || !sess || role !== "worker") return;
+    var f = $("wp-file").files && $("wp-file").files[0];
+    if (!mine) { say("Save your profile first, then upload your video.", "err"); return; }
+    if (!f) { say("Choose a video first.", "err"); return; }
+    if (f.size > MAXVID) { say("This video is too big (" + Math.round(f.size / 1048576) + " MB). The limit is 50 MB. Film 30 seconds in 720p.", "err"); return; }
+    var ext = (/\.(mp4|mov|webm)$/i.exec(f.name) || [])[1] || (/webm/.test(f.type) ? "webm" : /quicktime/.test(f.type) ? "mov" : "mp4");
+    var type = f.type || (ext.toLowerCase() === "mov" ? "video/quicktime" : "video/mp4");
+    var path = sess.user.id + "/skill-" + Date.now() + "." + ext.toLowerCase();
+    var old = mine.video_path;
+    lock(true); say("Uploading... please do not close this page.", "ok");
+    $("wp-bar").hidden = false; $("wp-barfill").style.width = "0%";
+    ensureFresh().then(function () {
+      return new Promise(function (resolve, reject) {
+        var x = new XMLHttpRequest();
+        x.open("POST", SUPA + "/storage/v1/object/skill-videos/" + path);
+        x.setRequestHeader("apikey", KEY); x.setRequestHeader("Authorization", "Bearer " + sess.access_token);
+        x.setRequestHeader("Content-Type", type); x.setRequestHeader("x-upsert", "false");
+        x.upload.onprogress = function (ev) { if (ev.lengthComputable) $("wp-barfill").style.width = Math.round(ev.loaded / ev.total * 100) + "%"; };
+        x.onload = function () { if (x.status >= 200 && x.status < 300) resolve(); else { var m = ""; try { m = JSON.parse(x.responseText).message; } catch (e) {} reject(new Error(m || ("Upload failed " + x.status))); } };
+        x.onerror = function () { reject(new Error("network")); };
+        x.send(f);
+      });
+    }).then(function () {
+      return api("PATCH", "/rest/v1/worker_profiles?id=eq." + sess.user.id, { json: { video_path: path }, prefer: "return=minimal" });
+    }).then(function () {
+      if (old && old !== path) api("DELETE", "/storage/v1/object/skill-videos/" + old).catch(function () {});
+      $("wp-file").value = ""; say("Video uploaded.", "ok"); return loadMine();
+    }).catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); $("wp-bar").hidden = true; });
+  });
+  ["wp-name", "wp-city", "wp-about"].forEach(function (id) { $(id).addEventListener("input", preview); });
+  ["wp-cat", "wp-exp"].forEach(function (id) { $(id).addEventListener("change", preview); });
+
+  /* ----- boss: browse workers ----- */
+  function loadList() {
+    $("wp-listnote").textContent = "Loading workers...";
+    return api("GET", "/rest/v1/worker_profiles?is_public=eq.true&select=id,first_name,skill,city,experience,about,video_path&order=created_at.desc&limit=50")
+      .then(function (rows) { real = rows || []; drawList(); })
+      .catch(function () { real = null; drawList("Could not load workers. Check your internet and try again."); });
+  }
+  function drawList(err) {
     var cat = $("wp-f-cat").value, city = $("wp-f-city").value.trim().toLowerCase(), out = "", n = 0;
-    SAMPLES.forEach(function (s) {
-      if (cat && s.c !== cat) return;
-      if (city && s.city.toLowerCase().indexOf(city) < 0) return;
+    var rows = real && real.length ? real : null;
+    $("wp-listnote").textContent = err || (rows ? rows.length + " worker(s) have joined." : "No workers have joined yet. These are examples only, not real people.");
+    (rows || SAMPLES.map(function (s) { return { example: true, first_name: s.n, skill: s.c, city: s.city, experience: s.e, about: s.t }; })).forEach(function (s) {
+      if (cat && s.skill !== cat) return;
+      if (city && String(s.city).toLowerCase().indexOf(city) < 0) return;
       n++;
-      out += '<div class="pcard"><div class="vid" aria-hidden="true">&#9654; Example video</div><b>' + esc(s.n) + ' <em>Example only</em></b><span>' + esc(s.c) + ' &middot; ' + esc(s.city) + ' &middot; ' + esc(s.e) + '</span><span>' + esc(s.t) + '</span></div>';
+      var u = s.example ? "" : videoUrl(s.video_path);
+      out += '<div class="pcard">' + (u ? '<video controls playsinline preload="none" src="' + esc(u) + '"></video>' : '<div class="vid" aria-hidden="true">' + (s.example ? "Example video" : "No video") + '</div>') +
+        '<b>' + esc(s.first_name) + (s.example ? ' <em>Example only</em>' : '') + '</b><span>' + esc(s.skill) + ' &middot; ' + esc(s.city) + ' &middot; ' + esc(s.experience || "") + '</span><span>' + esc(s.about || "") + '</span>' +
+        (s.example ? "" : '<button class="btn alt small" type="button" data-phone="' + esc(s.id) + '">Show phone number</button><span class="ph" data-ph="' + esc(s.id) + '"></span>') + '</div>';
     });
     $("wp-list").innerHTML = out; $("wp-none").hidden = n > 0;
   }
-  $("wp-f-cat").addEventListener("change", wpList); $("wp-f-city").addEventListener("input", wpList);
-  wpList();
+  $("wp-f-cat").addEventListener("change", function () { drawList(); });
+  $("wp-f-city").addEventListener("input", function () { drawList(); });
+  $("wp-list").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("[data-phone]") : null;
+    if (!b) return;
+    var wid = b.getAttribute("data-phone"), slot = document.querySelector('[data-ph="' + wid + '"]');
+    if (!/^[0-9a-f-]{36}$/i.test(wid)) return;
+    if (!sess) { say("Log in as a boss to see phone numbers.", "err"); $("wp-auth").scrollIntoView({ block: "center" }); return; }
+    if (role !== "boss") { say("Only boss accounts can see phone numbers.", "err"); return; }
+    slot.textContent = "Loading...";
+    api("GET", "/rest/v1/worker_contacts?id=eq." + wid + "&select=phone").then(function (r) {
+      var p = r && r[0] ? cleanPhone(r[0].phone) : "";
+      if (!p) { slot.textContent = "No number available."; return; }
+      var wa = p.length === 10 ? "91" + p : p;
+      slot.innerHTML = '<a href="tel:' + esc(p) + '">' + esc(p) + '</a> &middot; <a href="https://wa.me/' + esc(wa) + '" target="_blank" rel="noopener">WhatsApp</a>';
+    }).catch(function (er) { slot.textContent = friendly(er); });
+  });
+
+  fillSelects(); preview(); loadSess(); render();
+  if (sess) afterLogin().catch(function () {}).then(render);
+  window.__wpEnter = function () { if (side === "boss" || !real) loadList(); };
+  if (document.getElementById("workpath").classList.contains("on")) window.__wpEnter();
 
   /* ---------- Copy helper ---------- */
   function copyText(text, btn) {
