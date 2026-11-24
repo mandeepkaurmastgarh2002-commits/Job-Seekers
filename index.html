@@ -291,12 +291,13 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       <h3>Sign up or log in</h3>
       <label class="field"><span>Email</span><input type="email" id="wp-email" autocomplete="email" inputmode="email" autocapitalize="none" placeholder="you@example.com"></label>
       <label class="field"><span>Password (at least 6 letters)</span><input type="password" id="wp-pass" autocomplete="current-password" placeholder="Your password"></label>
-      <label class="field"><span>For sign up: I am a</span>
-        <select id="wp-role"><option value="worker">Worker (I want a job)</option><option value="boss">Boss (I need a worker)</option></select></label>
+      <p class="hint"><b>New here?</b> Tap the button that fits you. You cannot change it later.</p>
       <div class="seg">
-        <button class="btn" type="button" id="wp-signup">Sign up</button>
-        <button class="btn alt" type="button" id="wp-login">Log in</button>
+        <button class="btn" type="button" id="wp-signup-worker">Sign up as WORKER</button>
+        <button class="btn" type="button" id="wp-signup-boss">Sign up as BOSS</button>
       </div>
+      <p class="hint"><b>Already have an account?</b></p>
+      <button class="btn alt" type="button" id="wp-login">Log in</button>
       <p class="hint">Use an email you can open. Never use a password from another website.</p>
     </div>
 
@@ -365,7 +366,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     <a href="#workpath" data-go="workpath"><i>&#9654;</i>Work</a>
   </nav>
   <noscript><style>.page{display:block!important}</style></noscript>
-  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman.</footer>
+  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 7.</footer>
 </div>
 
 <script>
@@ -518,16 +519,18 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     if (pass.length < 6) { say("Password must be at least 6 letters.", "err"); return null; }
     return { email: email, password: pass };
   }
-  function lock(on) { busy = on; ["wp-signup", "wp-login", "wp-save", "wp-upload"].forEach(function (id) { $(id).disabled = on; }); }
-  $("wp-signup").addEventListener("click", function () {
+  function lock(on) { busy = on; ["wp-signup-worker", "wp-signup-boss", "wp-login", "wp-save", "wp-upload"].forEach(function (id) { $(id).disabled = on; }); }
+  function doSignup(want) {
     var c = creds(); if (!c || busy) return;
     lock(true); say("Please wait...", "ok");
-    lsSet("wpg_role", $("wp-role").value);
+    lsSet("wpg_role", want);
     authCall("/auth/v1/signup", c).then(function (d) {
-      if (d && d.access_token) { saveSess(toSess(d)); say("Welcome! Your account is ready.", "ok"); return afterLogin(true); }
+      if (d && d.access_token) { saveSess(toSess(d)); say("Welcome! Your account is ready (" + want + ").", "ok"); return afterLogin(true); }
       say("Check your email and tap the link. Then come back and tap Log in.", "ok");
     }).catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); render(); });
-  });
+  }
+  $("wp-signup-worker").addEventListener("click", function () { doSignup("worker"); });
+  $("wp-signup-boss").addEventListener("click", function () { doSignup("boss"); });
   $("wp-login").addEventListener("click", function () {
     var c = creds(); if (!c || busy) return;
     lock(true); say("Please wait...", "ok");
@@ -886,3 +889,4 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
 
 </body>
 </html>
+
