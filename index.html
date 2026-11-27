@@ -312,6 +312,11 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     </div>
 
     <div id="wp-worker">
+      <div id="wp-reqbox" class="box" hidden>
+        <h3>Contact requests</h3>
+        <p class="hint">A boss can get your phone number only if you tap Allow.</p>
+        <div id="wp-reqs"></div>
+      </div>
       <h3>Make your skill video</h3>
       <ol class="steps">
         <li><b>Keep it short.</b> 30 seconds is best. The limit is 50 MB.</li>
@@ -347,11 +352,11 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     <div id="wp-boss" hidden>
       <div id="wp-bossform" class="box" hidden>
         <h3>Tell us about your business</h3>
-        <p class="hint">We check every boss before phone numbers are shown. This keeps workers safe.</p>
+        <p class="hint">Workers see this before they say yes to you. Use your real business name.</p>
         <label class="field"><span>Company or shop name</span><input type="text" id="wp-bco" maxlength="80" autocomplete="organization"></label>
         <label class="field"><span>Your city</span><input type="text" id="wp-bcity" maxlength="60" autocomplete="address-level2"></label>
         <label class="field"><span>What work do you hire for?</span><input type="text" id="wp-bhire" maxlength="120" placeholder="e.g. electricians for house wiring"></label>
-        <button class="btn" type="button" id="wp-bsave">Send for approval</button>
+        <button class="btn" type="button" id="wp-bsave">Save</button>
       </div>
       <p class="msg" id="wp-bstatus" hidden></p>
       <h3>Find a worker</h3>
@@ -376,7 +381,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     <a href="#workpath" data-go="workpath"><i>&#9654;</i>Work</a>
   </nav>
   <noscript><style>.page{display:block!important}</style></noscript>
-  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 8.</footer>
+  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 9.</footer>
 </div>
 
 <script>
@@ -424,7 +429,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     { n: "Example B", c: "Tailor", city: "Mumbai", e: "More than 5 years", t: "Blouse and kurta stitching" },
     { n: "Example C", c: "Driver", city: "Delhi", e: "1 to 3 years", t: "Car driver with a licence" }
   ];
-  var sess = null, role = null, side = "worker", real = null, mine = null, busy = false, bossInfo = null;
+  var sess = null, role = null, side = "worker", real = null, mine = null, busy = false, bossInfo = null, reqMap = {};
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (m) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]; }); }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -445,8 +450,9 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     if (/rate limit|too many|429/i.test(m)) return "Too many tries. Please wait a few minutes.";
     if (/valid email|invalid email|unable to validate email/i.test(m)) return "Please type a correct email.";
     if (/failed to fetch|network|load failed/i.test(m)) return "No internet, or the server did not answer. Try again.";
-    if (/NOT_APPROVED/.test(m)) return "Your boss account is not approved yet. We will approve it soon.";
-    if (/LIMIT/.test(m)) return "You have seen 10 phone numbers today. Please try again tomorrow.";
+    if (/NOT_ALLOWED/.test(m)) return "The worker has not allowed this yet.";
+    if (/NO_DETAILS/.test(m)) return "First tell us about your business (box above).";
+    if (/LIMIT/.test(m)) return "You asked 10 workers today. Please try again tomorrow.";
     if (/NOT_BOSS/.test(m)) return "Only boss accounts can see phone numbers.";
     if (/BLOCKED/.test(m)) return "This account is blocked.";
     if (/NOT_FOUND/.test(m)) return "No number available.";
@@ -512,10 +518,8 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     $("wp-editor").hidden = !(logged && role === "worker");
     var isBoss = logged && role === "boss";
     $("wp-bossform").hidden = !(isBoss && !bossInfo);
-    var bs = $("wp-bstatus");
-    if (isBoss && bossInfo && !bossInfo.approved) { bs.textContent = "Waiting for approval. You can watch the videos now. Phone numbers will show after we approve you."; bs.className = "msg ok"; bs.hidden = false; }
-    else if (isBoss && bossInfo && bossInfo.approved) { bs.textContent = "Your boss account is approved."; bs.className = "msg ok"; bs.hidden = false; }
-    else bs.hidden = true;
+    $("wp-bstatus").hidden = true;
+    $("wp-reqbox").hidden = !(logged && role === "worker");
   }
   function afterLogin(fromSignup) {
     return api("GET", "/rest/v1/profiles?id=eq." + sess.user.id + "&select=role").then(function (rows) {
@@ -524,18 +528,36 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       lsSet("wpg_role", null);
       if (!role && (wanted === "worker" || wanted === "boss")) return setRole(wanted);
     }).then(function () {
-      if (role === "boss") side = "boss";
+      if (role === "boss") side = "boss"; else if (role === "worker") side = "worker";
       if (role === "boss") return loadBoss();
     }).then(function () {
       render();
       if (role === "boss") loadList();
-      if (role === "worker") return loadMine();
+      if (role === "worker") return loadMine().then(loadReqs);
     });
+  }
+  function loadReqs() {
+    if (!sess || role !== "worker") return Promise.resolve();
+    return api("POST", "/rest/v1/rpc/my_requests", { json: {} }).then(function (rows) {
+      var out = "", pend = 0;
+      (rows || []).forEach(function (r) {
+        if (r.status === "pending") pend++;
+        out += '<div class="pcard"><b>' + esc(r.company) + '</b><span>' + esc(r.city) + ' &middot; hires: ' + esc(r.hires) + '</span>' +
+          (r.status === "pending" ? '<span class="ph"><button class="btn small" type="button" data-ans="1" data-rid="' + esc(r.id) + '">Allow</button><button class="btn alt small" type="button" data-ans="0" data-rid="' + esc(r.id) + '">No</button></span>'
+            : '<span class="ph">' + (r.status === "allowed" ? "You allowed this boss to see your number." : "You said no.") + '</span>') +
+          '<button class="btn alt small" type="button" data-repboss="' + esc(r.boss_id) + '">Report this boss</button></div>';
+      });
+      $("wp-reqs").innerHTML = out || '<p class="hint">No requests yet.</p>';
+      if (pend) say("You have " + pend + " new contact request(s). Scroll down to answer.", "ok");
+    }).catch(function () { $("wp-reqs").innerHTML = '<p class="hint">Could not load requests.</p>'; });
   }
   function loadBoss() {
     return api("GET", "/rest/v1/boss_details?id=eq." + sess.user.id + "&select=approved").then(function (r) {
       bossInfo = r && r[0] ? r[0] : null;
-    }).catch(function () { bossInfo = null; });
+      return api("GET", "/rest/v1/contact_requests?select=worker_id,status");
+    }).then(function (rq) {
+      reqMap = {}; (rq || []).forEach(function (x) { reqMap[x.worker_id] = x.status; });
+    }).catch(function () { bossInfo = bossInfo || null; });
   }
   function setRole(r) {
     return api("POST", "/rest/v1/profiles", { json: { id: sess.user.id, role: r }, prefer: "return=minimal" }).then(function () { role = r; lsSet("wpg_role", null); if (r === "boss") side = "boss"; render(); if (r === "worker") return loadMine(); if (r === "boss") loadList(); });
@@ -569,7 +591,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
   });
   $("wp-logout").addEventListener("click", function () {
     var tok = sess && sess.access_token;
-    saveSess(null); role = null; mine = null; bossInfo = null; $("wp-pass").value = "";
+    saveSess(null); role = null; mine = null; bossInfo = null; reqMap = {}; side = "worker"; $("wp-pass").value = "";
     if (tok) fetch(SUPA + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + tok } }).catch(function () {});
     say("You are logged out.", "ok"); render();
   });
@@ -669,6 +691,13 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       .then(function (rows) { real = rows || []; drawList(); })
       .catch(function () { real = null; drawList("Could not load workers. Check your internet and try again."); });
   }
+  function cardBtn(id) {
+    var st = reqMap[id], e = esc(id), rp = '<button class="btn alt small" type="button" data-report="' + e + '">Report</button>';
+    if (st === "allowed") return '<button class="btn alt small" type="button" data-phone="' + e + '">Show phone number</button><span class="ph" data-ph="' + e + '"></span>' + rp;
+    if (st === "pending") return '<span class="ph">Request sent. Waiting for the worker.</span>' + rp;
+    if (st === "declined") return '<span class="ph">The worker said no.</span>' + rp;
+    return '<button class="btn small" type="button" data-ask="' + e + '">Ask to contact</button>' + rp;
+  }
   function drawList(err) {
     var cat = $("wp-f-cat").value, city = $("wp-f-city").value.trim().toLowerCase(), out = "", n = 0;
     var rows = real && real.length ? real : null;
@@ -680,7 +709,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       var u = s.example ? "" : videoUrl(s.video_path);
       out += '<div class="pcard">' + (u ? '<video controls playsinline preload="none" src="' + esc(u) + '"></video>' : '<div class="vid" aria-hidden="true">' + (s.example ? "Example video" : "No video") + '</div>') +
         '<b>' + esc(s.first_name) + (s.example ? ' <em>Example only</em>' : '') + '</b><span>' + esc(s.skill) + ' &middot; ' + esc(s.city) + ' &middot; ' + esc(s.experience || "") + '</span><span>' + esc(s.about || "") + '</span>' +
-        (s.example ? "" : '<button class="btn alt small" type="button" data-phone="' + esc(s.id) + '">Show phone number</button><span class="ph" data-ph="' + esc(s.id) + '"></span><button class="btn alt small" type="button" data-report="' + esc(s.id) + '">Report</button>') + '</div>';
+        (s.example ? "" : cardBtn(s.id)) + '</div>';
     });
     $("wp-list").innerHTML = out; $("wp-none").hidden = n > 0;
   }
@@ -695,27 +724,57 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       .then(function () { bossInfo = { approved: false }; say("Sent. We will check and approve you.", "ok"); })
       .catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); render(); });
   });
+  function doReport(rid) {
+    if (!/^[0-9a-f-]{36}$/i.test(rid)) return;
+    if (!sess) { say("Please log in to report.", "err"); $("wp-auth").scrollIntoView({ block: "center" }); return; }
+    var why = window.prompt("Why do you report this? (short)");
+    if (!why || why.trim().length < 3) return;
+    api("POST", "/rest/v1/rpc/report_user", { json: { target: rid, reason: why.trim().slice(0, 300) } })
+      .then(function () { say("Thank you. We will check this.", "ok"); })
+      .catch(function (er) { say(friendly(er), "err"); });
+  }
+  $("wp-reqs").addEventListener("click", function (e) {
+    var rb2 = e.target.closest ? e.target.closest("[data-repboss]") : null;
+    if (rb2) { doReport(rb2.getAttribute("data-repboss")); return; }
+    var b2 = e.target.closest ? e.target.closest("[data-rid]") : null;
+    if (!b2 || busy) return;
+    var rid = Number(b2.getAttribute("data-rid")), allow = b2.getAttribute("data-ans") === "1";
+    if (!rid) return;
+    lock(true);
+    api("POST", "/rest/v1/rpc/answer_request", { json: { rid: rid, allow: allow } })
+      .then(function () { say(allow ? "Allowed. The boss can now see your number." : "Done. You said no.", "ok"); return loadReqs(); })
+      .catch(function (er) { say(friendly(er), "err"); }).then(function () { lock(false); });
+  });
+  $("wp-bsave").addEventListener("click", function () {
+    if (busy || !sess || role !== "boss") return;
+    var co = $("wp-bco").value.trim(), ci = $("wp-bcity").value.trim(), hi = $("wp-bhire").value.trim();
+    if (co.length < 2 || !ci || hi.length < 2) { say("Please fill all three boxes.", "err"); return; }
+    lock(true); say("Please wait...", "ok");
+    api("POST", "/rest/v1/boss_details", { json: { id: sess.user.id, company: co, city: ci, hires: hi }, prefer: "return=minimal" })
+      .then(function () { bossInfo = { approved: false }; say("Saved. Now tap Ask to contact on a worker card.", "ok"); })
+      .catch(function (e) { say(friendly(e), "err"); }).then(function () { lock(false); render(); });
+  });
   $("wp-list").addEventListener("click", function (e) {
     var rp = e.target.closest ? e.target.closest("[data-report]") : null;
-    if (rp) {
-      var rid = rp.getAttribute("data-report");
-      if (!/^[0-9a-f-]{36}$/i.test(rid)) return;
-      if (!sess) { say("Please log in to report.", "err"); $("wp-auth").scrollIntoView({ block: "center" }); return; }
-      var why = window.prompt("Why do you report this card? (short)");
-      if (!why || why.trim().length < 3) return;
-      api("POST", "/rest/v1/reports", { json: { worker_id: rid, reason: why.trim().slice(0, 300) }, prefer: "return=minimal" })
-        .then(function () { say("Thank you. We will check this card.", "ok"); })
-        .catch(function (er) { say(friendly(er), "err"); });
+    if (rp) { doReport(rp.getAttribute("data-report")); return; }
+    var ak = e.target.closest ? e.target.closest("[data-ask]") : null;
+    if (ak) {
+      var aid = ak.getAttribute("data-ask");
+      if (!/^[0-9a-f-]{36}$/i.test(aid) || busy) return;
+      if (!sess) { say("Log in as a boss to ask.", "err"); $("wp-auth").scrollIntoView({ block: "center" }); return; }
+      if (role !== "boss") { say("Only boss accounts can ask.", "err"); return; }
+      if (!bossInfo) { say("First tell us about your business (box above).", "err"); $("wp-bossform").scrollIntoView({ block: "center" }); return; }
+      lock(true);
+      api("POST", "/rest/v1/rpc/request_contact", { json: { wid: aid } })
+        .then(function (st) { reqMap[aid] = st || "pending"; say("Request sent. The worker will answer.", "ok"); drawList(); })
+        .catch(function (er) { say(friendly(er), "err"); }).then(function () { lock(false); });
       return;
     }
     var b = e.target.closest ? e.target.closest("[data-phone]") : null;
     if (!b) return;
     var wid = b.getAttribute("data-phone"), slot = document.querySelector('[data-ph="' + wid + '"]');
     if (!/^[0-9a-f-]{36}$/i.test(wid)) return;
-    if (!sess) { say("Log in as a boss to see phone numbers.", "err"); $("wp-auth").scrollIntoView({ block: "center" }); return; }
-    if (role !== "boss") { say("Only boss accounts can see phone numbers.", "err"); return; }
-    if (!bossInfo) { say("First tell us about your business (box above).", "err"); return; }
-    if (!bossInfo.approved) { say(friendly(new Error("NOT_APPROVED")), "err"); return; }
+    if (!sess || role !== "boss") { say("Only boss accounts can see phone numbers.", "err"); return; }
     slot.textContent = "Loading...";
     api("POST", "/rest/v1/rpc/reveal_phone", { json: { wid: wid } }).then(function (r) {
       var p = cleanPhone(r);
@@ -727,7 +786,7 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
 
   fillSelects(); preview(); loadSess(); render();
   if (sess) afterLogin().catch(function () {}).then(render);
-  window.__wpEnter = function () { if (side === "boss" || !real) loadList(); };
+  window.__wpEnter = function () { if (side === "boss" || !real) loadList(); if (role === "worker") loadReqs(); };
   if (document.getElementById("workpath").classList.contains("on")) window.__wpEnter();
 
   /* ---------- Copy helper ---------- */
