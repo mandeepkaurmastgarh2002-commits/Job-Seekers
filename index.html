@@ -364,7 +364,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
       <button class="btn" type="button" id="r-check">Check my resume</button>
       <button class="btn alt" type="button" id="r-clear">Clear both boxes</button>
     </div>
-    <p class="hint">The boxes start with example text. Clear them and paste your own.</p>
+    <p class="hint">The boxes start with example text. Tap <b>Clear both boxes</b>, paste your own job post and resume, then tap <b>Check my resume</b>. The result shows below.</p>
     <div class="result" id="r-result" aria-live="polite" hidden>
       <div class="score"><span class="num" id="r-num">0%</span><span class="lbl" id="r-lbl">of the main job words are in your resume</span></div>
       <div class="meter" aria-hidden="true"><div id="r-bar"></div></div>
@@ -487,7 +487,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
     <a href="#workpath" data-go="workpath"><i>&#9654;</i>Work</a>
   </nav>
   <noscript><style>.page{display:block!important}</style></noscript>
-  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 10.</footer>
+  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 11.</footer>
 </div>
 
 <script>
@@ -1114,7 +1114,11 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
     var tk = $("r-ticks"); tk.textContent = "";
     checks.forEach(function (c) { tk.appendChild(el("li", c[0] ? "pass" : "fail", c[1])); });
   }
-  $("r-check").addEventListener("click", checkResume);
+  $("r-check").addEventListener("click", function () {
+    checkResume();
+    var rr = $("r-result");
+    if (rr && !rr.hidden) { try { rr.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) { rr.scrollIntoView(); } }
+  });
   $("r-clear").addEventListener("click", function () {
     $("r-job").value = ""; $("r-resume").value = ""; $("r-result").hidden = true; $("r-job").focus();
   });
