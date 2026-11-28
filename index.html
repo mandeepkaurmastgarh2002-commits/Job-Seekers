@@ -245,7 +245,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
   </header>
   <div class="stats">
     <div><b>4</b><span>Job sites in one tap</span></div>
-    <div><b>40</b><span>Real interview questions</span></div>
+    <div><b>80</b><span>Real interview questions</span></div>
     <div><b>Free</b><span>To start</span></div>
   </div>
   <h2 class="secth">What do you want to do?</h2>
@@ -308,8 +308,15 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
         <select id="qa-role"></select></label>
       <p class="hint" id="qa-intro"></p>
       <div id="qa-list"></div>
+      <div class="box">
+        <h3 style="margin:0 0 6px">Your job is not here?</h3>
+        <label class="field"><span>Tell us the job. We will add it next.</span><input type="text" id="jr-text" maxlength="60" placeholder="e.g. cook, tailor, nurse"></label>
+        <button class="btn alt" type="button" id="jr-send">Tell us</button>
+        <p class="hint" id="jr-msg" aria-live="polite"></p>
+      </div>
       <h3 class="secth">Get all the answers</h3>
-      <div class="pack"><div><b>Interview Q&amp;A Pack</b><span>25 more questions with model answers</span></div><div class="price">&#8377;10<small>Coming soon</small></div></div>
+      <p class="hint" id="qa-own"></p>
+      <div class="pack"><div><b>Interview Q&amp;A Pack</b><span>50 more questions with model answers</span></div><div class="price">&#8377;10<small>Coming soon</small></div></div>
       <div class="pack"><div><b>Resume Templates</b><span>Ready resume files you can edit</span></div><div class="price">&#8377;20<small>Coming soon</small></div></div>
       <div class="pack"><div><b>Full Starter Kit</b><span>Everything: Q&amp;A, resumes, cover letters, job tracker</span></div><div class="price">&#8377;29<small>Coming soon</small></div></div>
       <p class="src">Where these questions come from: questions that candidates report on public sites such as <a href="https://www.naukri.com/blog/11-common-hr-interview-questions-for-freshers/" target="_blank" rel="noopener">Naukri</a> and <a href="https://ambitionbox.com/profiles/data-entry-operator/interview-questions" target="_blank" rel="noopener">AmbitionBox</a>. The answers are our own. Always use your own true details. Never say something false in an interview.</p>
@@ -487,7 +494,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
     <a href="#workpath" data-go="workpath"><i>&#9654;</i>Work</a>
   </nav>
   <noscript><style>.page{display:block!important}</style></noscript>
-  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 11.</footer>
+  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 12.</footer>
 </div>
 
 <script>
@@ -517,6 +524,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
     }
     if (!noScroll) window.scrollTo(0, 0);
     if (name === "workpath" && typeof window.__wpEnter === "function") window.__wpEnter();
+    if (name === "prepare" && typeof window.__qaEnter === "function") window.__qaEnter();
   }
   var gos = document.querySelectorAll("[data-go]");
   for (var g = 0; g < gos.length; g++) {
@@ -537,95 +545,55 @@ input[type="text"], input[type="email"], input[type="password"], input[type="tel
   for (var pi = 0; pi < pbs.length; pi++) {
     pbs[pi].addEventListener("click", function () { showPanel(this.getAttribute("data-pb")); });
   }
-  var QA = [
-    { id: "hr", name: "Any job (HR round)",
-      intro: "The first round is often a short talk with HR. These questions come up for almost every job.",
-      free: [
-        { q: "Tell me about yourself.", look: "Can you speak clearly and keep it short?",
-          a: "My name is [your name]. I finished [course] from [college] in [year]. I am good at [skill 1] and [skill 2]. In college I [one real thing you did, for example helped run an event]. Now I want to start my career as [job], because [honest reason].",
-          tip: "Keep it to 60 seconds. Do not tell your whole life story." },
-        { q: "Why should we hire you?", look: "Do you know what the company needs?",
-          a: "I am a fresher, so I learn fast and I am ready to work hard. I am always on time and I finish what I start. For this job I can already [one skill that fits the job]. I will give my best every day and I will keep learning.",
-          tip: "Only say things that are true for you. Give one real example if you can." },
-        { q: "What salary do you expect?", look: "Are your expectations realistic?",
-          a: "I am a fresher and my main aim is to learn and grow. I expect a salary as per the company's norms for this role. If you can share the range, I can tell you if it works for me.",
-          tip: "Do not say a very high number, and do not say \"anything is fine\"." }
-      ],
-      locked: ["Why do you want to work in our company?", "What is your biggest strength and your weakness?", "Where do you see yourself in three years?", "Are you ready for night shifts or to move to another city?", "Do you have any questions for us?"] },
-    { id: "bpo", name: "Customer care / BPO",
-      intro: "Call centre and support interviews check your voice, patience and how you speak to upset people.",
-      free: [
-        { q: "How will you handle an angry customer?", look: "Are you calm, and do you take ownership of the problem?",
-          a: "I stay calm and let the customer finish speaking. I say sorry for the trouble. Then I check what went wrong and tell the customer what I will do and how long it will take. If I cannot solve it myself, I ask my team leader and I tell the customer clearly.",
-          tip: "Never argue with the customer, even if they are wrong." },
-        { q: "What is the difference between inbound and outbound calls?", look: "Do you know the basics of the work?",
-          a: "In inbound, the customer calls us for help, for example a question or a complaint. In outbound, we call the customer, for example for sales, reminders or feedback. Inbound needs patience and good listening. Outbound needs a polite voice and good convincing.",
-          tip: "Say which one you prefer and why." },
-        { q: "How will you stay fresh on long calls with the same questions?", look: "Patience and energy for repeat work.",
-          a: "I treat every customer as a new person, because for them it is a new problem. I take my breaks, drink water, and keep a smile in my voice. I focus on solving one call at a time.",
-          tip: "A smile can be heard on the phone. Say that." }
-      ],
-      locked: ["What is First Call Resolution and why does it matter?", "Voice process or non-voice process: which do you prefer?", "How will you keep customer data safe?", "What will you do if you do not know the answer?", "Are you ready for rotational or night shifts?"] },
-    { id: "data", name: "Data entry / office work",
-      intro: "Office jobs check your typing, accuracy and basic computer skills. You may get a typing test.",
-      free: [
-        { q: "What is your typing speed?", look: "Honesty, speed and accuracy.",
-          a: "My speed is about [your number] words per minute, with about [your accuracy]% accuracy. I am happy to take a typing test now.",
-          tip: "Test yourself on a free typing site before the interview. Accuracy matters more than speed." },
-        { q: "How do you make sure there are no mistakes in your entries?", look: "Care and checking habits.",
-          a: "I type slowly and carefully first. Then I check each row against the original. I use spell check, and I sort or filter the data to find odd values. Before I submit, I check totals and look again at important columns.",
-          tip: "Mention one habit that is really yours." },
-        { q: "What do you know in Excel?", look: "Basic skills, said honestly.",
-          a: "I can enter and format data, sort and filter, and use SUM, AVERAGE, COUNT and IF. I can make a simple chart. I am now learning VLOOKUP.",
-          tip: "Only say what you can do. They may ask you to show it." }
-      ],
-      locked: ["What will you do if two records do not match?", "What file endings do Word and Excel files have?", "How will you keep the company's data private?", "Can you do repeat work for many hours?", "What is VLOOKUP and when do you use it?"] },
-    { id: "sales", name: "Shop / sales",
-      intro: "Shop and sales interviews check how you talk to customers and handle \"no\".",
-      free: [
-        { q: "Sell me this pen.", look: "Do you ask questions first, or just push?",
-          a: "First I ask: \"What do you write most, notes or forms?\" Then I show the part that fits: \"This pen writes smoothly and does not smudge, so your notes stay clean.\" Then I ask: \"Would you like to try it?\"",
-          tip: "Ask first, then match, then ask for the sale." },
-        { q: "A customer walks in. What do you do?", look: "Welcome and helpfulness.",
-          a: "I smile, say hello and ask how I can help. I listen to what the customer needs, show two or three good choices, and explain the price clearly. If the customer wants to look alone, I step back and stay nearby.",
-          tip: "Do not follow the customer around. Do not push." },
-        { q: "The customer says the price is too high. What now?", look: "Do you stay polite and offer a solution?",
-          a: "I understand. I explain what the customer gets for the price, for example quality or warranty. If there is a cheaper option, I show it. I never argue about the price.",
-          tip: "Never lie about the product to make the sale." }
-      ],
-      locked: ["How do you deal with a customer who is only looking?", "What will you do if the product is out of stock?", "What do you know about our shop or brand?", "How will you reach a monthly sales target?", "How will you work with the other staff at the counter?"] },
-    { id: "delivery", name: "Delivery / warehouse",
-      intro: "Delivery and warehouse jobs check that you are reliable, on time and safe.",
-      free: [
-        { q: "Why do you want this delivery job, and can you work long hours in any weather?", look: "Are you serious and reliable?",
-          a: "I want steady work and I like being outside and moving around. I am ready to work the hours needed, including bad weather, and I will always be careful on the road.",
-          tip: "Only promise what you can really do." },
-        { q: "How will you make sure the parcel reaches the right person on time?", look: "Planning and care.",
-          a: "I check the address and phone number before I start. I plan my route, call the customer if the address is not clear, and give the parcel only to the right person. I use the OTP or take a photo as proof, and I tell my manager at once if there is a problem.",
-          tip: "Mention checking the address and getting proof of delivery." },
-        { q: "The customer is not at home and does not pick up the phone. What will you do?", look: "Do you follow rules and stay calm?",
-          a: "I call two or three times and send a message. I ask neighbours only if the company allows it. If I still cannot reach the customer, I follow the company rule: try again later or return the parcel. I report it in the app.",
-          tip: "Never leave a parcel in an unsafe place." }
-      ],
-      locked: ["Do you know the roads and areas of this city?", "What papers and vehicle do you have (licence, bike, phone)?", "What will you do if a parcel is damaged?", "How will you stay safe on the road?", "How many deliveries can you do in one day?"] }
-  ];
+  var QA = [{"id": "hr", "name": "Any job (HR round)", "intro": "The first round is often a short talk with HR. These questions come up for almost every job.", "free": [{"q": "Tell me about yourself.", "look": "Can you speak clearly and keep it short?", "a": "My name is [your name]. I finished [course] from [college] in [year]. I am good at [skill 1] and [skill 2]. In college I [one real thing you did, for example helped run an event]. Now I want to start my career as [job], because [honest reason].", "tip": "Keep it to 60 seconds. Do not tell your whole life story."}, {"q": "Why should we hire you?", "look": "Do you know what the company needs?", "a": "I am a fresher, so I learn fast and I am ready to work hard. I am always on time and I finish what I start. For this job I can already [one skill that fits the job]. I will give my best every day and I will keep learning.", "tip": "Only say things that are true for you. Give one real example if you can."}, {"q": "What salary do you expect?", "look": "Are your expectations realistic?", "a": "I am a fresher and my main aim is to learn and grow. I expect a salary as per the company's norms for this role. If you can share the range, I can tell you if it works for me.", "tip": "Do not say a very high number, and do not say \"anything is fine\"."}], "locked": ["Why do you want to work in our company?", "What is your biggest strength and your weakness?", "Where do you see yourself in three years?", "Are you ready for night shifts or to move to another city?", "Do you have any questions for us?"]}, {"id": "bpo", "name": "Customer care / BPO", "intro": "Call centre and support interviews check your voice, patience and how you speak to upset people.", "free": [{"q": "How will you handle an angry customer?", "look": "Are you calm, and do you take ownership of the problem?", "a": "I stay calm and let the customer finish speaking. I say sorry for the trouble. Then I check what went wrong and tell the customer what I will do and how long it will take. If I cannot solve it myself, I ask my team leader and I tell the customer clearly.", "tip": "Never argue with the customer, even if they are wrong."}, {"q": "What is the difference between inbound and outbound calls?", "look": "Do you know the basics of the work?", "a": "In inbound, the customer calls us for help, for example a question or a complaint. In outbound, we call the customer, for example for sales, reminders or feedback. Inbound needs patience and good listening. Outbound needs a polite voice and good convincing.", "tip": "Say which one you prefer and why."}, {"q": "How will you stay fresh on long calls with the same questions?", "look": "Patience and energy for repeat work.", "a": "I treat every customer as a new person, because for them it is a new problem. I take my breaks, drink water, and keep a smile in my voice. I focus on solving one call at a time.", "tip": "A smile can be heard on the phone. Say that."}], "locked": ["What is First Call Resolution and why does it matter?", "Voice process or non-voice process: which do you prefer?", "How will you keep customer data safe?", "What will you do if you do not know the answer?", "Are you ready for rotational or night shifts?"]}, {"id": "data", "name": "Data entry / office work", "intro": "Office jobs check your typing, accuracy and basic computer skills. You may get a typing test.", "free": [{"q": "What is your typing speed?", "look": "Honesty, speed and accuracy.", "a": "My speed is about [your number] words per minute, with about [your accuracy]% accuracy. I am happy to take a typing test now.", "tip": "Test yourself on a free typing site before the interview. Accuracy matters more than speed."}, {"q": "How do you make sure there are no mistakes in your entries?", "look": "Care and checking habits.", "a": "I type slowly and carefully first. Then I check each row against the original. I use spell check, and I sort or filter the data to find odd values. Before I submit, I check totals and look again at important columns.", "tip": "Mention one habit that is really yours."}, {"q": "What do you know in Excel?", "look": "Basic skills, said honestly.", "a": "I can enter and format data, sort and filter, and use SUM, AVERAGE, COUNT and IF. I can make a simple chart. I am now learning VLOOKUP.", "tip": "Only say what you can do. They may ask you to show it."}], "locked": ["What will you do if two records do not match?", "What file endings do Word and Excel files have?", "How will you keep the company's data private?", "Can you do repeat work for many hours?", "What is VLOOKUP and when do you use it?"]}, {"id": "sales", "name": "Shop / sales", "intro": "Shop and sales interviews check how you talk to customers and handle \"no\".", "free": [{"q": "Sell me this pen.", "look": "Do you ask questions first, or just push?", "a": "First I ask: \"What do you write most, notes or forms?\" Then I show the part that fits: \"This pen writes smoothly and does not smudge, so your notes stay clean.\" Then I ask: \"Would you like to try it?\"", "tip": "Ask first, then match, then ask for the sale."}, {"q": "A customer walks in. What do you do?", "look": "Welcome and helpfulness.", "a": "I smile, say hello and ask how I can help. I listen to what the customer needs, show two or three good choices, and explain the price clearly. If the customer wants to look alone, I step back and stay nearby.", "tip": "Do not follow the customer around. Do not push."}, {"q": "The customer says the price is too high. What now?", "look": "Do you stay polite and offer a solution?", "a": "I understand. I explain what the customer gets for the price, for example quality or warranty. If there is a cheaper option, I show it. I never argue about the price.", "tip": "Never lie about the product to make the sale."}], "locked": ["How do you deal with a customer who is only looking?", "What will you do if the product is out of stock?", "What do you know about our shop or brand?", "How will you reach a monthly sales target?", "How will you work with the other staff at the counter?"]}, {"id": "delivery", "name": "Delivery / warehouse", "intro": "Delivery and warehouse jobs check that you are reliable, on time and safe.", "free": [{"q": "Why do you want this delivery job, and can you work long hours in any weather?", "look": "Are you serious and reliable?", "a": "I want steady work and I like being outside and moving around. I am ready to work the hours needed, including bad weather, and I will always be careful on the road.", "tip": "Only promise what you can really do."}, {"q": "How will you make sure the parcel reaches the right person on time?", "look": "Planning and care.", "a": "I check the address and phone number before I start. I plan my route, call the customer if the address is not clear, and give the parcel only to the right person. I use the OTP or take a photo as proof, and I tell my manager at once if there is a problem.", "tip": "Mention checking the address and getting proof of delivery."}, {"q": "The customer is not at home and does not pick up the phone. What will you do?", "look": "Do you follow rules and stay calm?", "a": "I call two or three times and send a message. I ask neighbours only if the company allows it. If I still cannot reach the customer, I follow the company rule: try again later or return the parcel. I report it in the app.", "tip": "Never leave a parcel in an unsafe place."}], "locked": ["Do you know the roads and areas of this city?", "What papers and vehicle do you have (licence, bike, phone)?", "What will you do if a parcel is damaged?", "How will you stay safe on the road?", "How many deliveries can you do in one day?"]}, {"id": "reception", "name": "Receptionist / front desk", "intro": "Front desk jobs check your voice, manners, neat look and how you handle many things at once.", "free": [{"q": "How will you greet a visitor who comes to the office?", "look": "Are you polite and welcoming?", "a": "I look up, smile and say, \"Good morning, welcome. How may I help you?\" I ask the visitor's name and whom they want to meet, tell that person, and ask the visitor to sit and wait. I offer water if the company allows.", "tip": "Smile and look at the person. It is the first thing they see."}, {"q": "The phone rings while you are talking to a visitor. What will you do?", "look": "Can you manage two things politely?", "a": "I say, \"Excuse me for one moment\" to the visitor, answer the call politely and, if it will take long, I ask the caller to hold or I take their number to call back. Then I return to the visitor and thank them for waiting.", "tip": "Never ignore the person in front of you or the phone."}, {"q": "What do you know about MS Word, Excel and email?", "look": "Basic computer skills, said honestly.", "a": "I can type letters in Word, make simple lists and tables in Excel, and send and reply to emails with attachments. I check the spelling before I send anything.", "tip": "Only say what you can do. They may ask you to show it."}], "locked": ["How will you handle a visitor who is angry or has no appointment?", "How will you keep the visitor record and the office safe?", "Which languages can you speak and write?", "How will you manage many tasks at the same time?", "Are you fine with a formal dress and long hours at the desk?"]}, {"id": "guard", "name": "Security guard", "intro": "Guard jobs check that you are alert, honest, fit and follow the rules.", "free": [{"q": "Why do you want to work as a security guard?", "look": "Are you serious about this job?", "a": "I want a steady job with discipline. I am alert and honest, and I can stay on duty for long hours. I take safety seriously and I will follow every rule.", "tip": "Say honestly why you want this job, in one or two lines."}, {"q": "A stranger tries to enter without permission. What will you do?", "look": "Do you follow the rule and stay calm?", "a": "I stop him politely at the gate, ask his name and whom he wants to meet, and check with that person. I note it in the register. If he refuses or looks suspicious, I do not fight. I call my supervisor, or the police if needed, as per the rule.", "tip": "Never use force. Call for help."}, {"q": "Are you ready for night duty and 8 to 12 hour shifts?", "look": "Can you stay awake and fit?", "a": "Yes. I can stay awake and alert at night. I will keep myself healthy and reach my shift on time.", "tip": "Say only what is true."}], "locked": ["What will you do if you see fire or smoke?", "How will you keep a record of visitors and vehicles?", "A staff member you know asks you to let a stranger in without a pass. What do you do?", "Do you have any training or experience, like army, NCC or a guard course?", "What will you do if you find a bag or parcel left alone?"]}, {"id": "driver", "name": "Driver", "intro": "Driver interviews check your licence, your safety habits and how you treat passengers.", "free": [{"q": "What licence and driving experience do you have?", "look": "Are your papers and experience real?", "a": "I have a [LMV / HMV] licence, valid till [year]. I have driven for [how long] on [types of roads and vehicles]. I carry my original licence with me.", "tip": "Bring the original licence and other papers."}, {"q": "How do you keep passengers safe?", "look": "Do you drive responsibly?", "a": "I wear my seat belt, keep to the speed limit, keep a safe distance and do not use my phone while driving. I never drive when tired or after drinking. I check the vehicle before every trip.", "tip": "Say \"safety first\" and give two real habits."}, {"q": "What will you do if the vehicle breaks down on the road?", "look": "Do you stay calm and think of safety?", "a": "I move the vehicle to a safe side and switch on the hazard lights. I tell the passenger and my owner or manager. I call the mechanic or the tow service and I stay with the vehicle.", "tip": "Passenger safety comes first."}], "locked": ["What do you check in the vehicle before a trip?", "How will you reach on time in heavy traffic?", "A passenger asks you to drive fast or break a rule. What will you do?", "Do you know the city roads, and can you use a map app?", "Are you ready for long trips, night duty and weekends?"]}, {"id": "hotel", "name": "Waiter / hotel staff", "intro": "Hotel and restaurant jobs check your manners, speed and cleanliness.", "free": [{"q": "How will you greet and serve a table of guests?", "look": "Do you know the basic service?", "a": "I smile, greet the guests, give the menu and water, and give them a little time. I take the order clearly, repeat it to confirm and tell the kitchen right away. I serve each dish carefully and check back to ask if they need anything.", "tip": "Repeating the order shows you are careful."}, {"q": "A guest complains that the food is cold or wrong. What will you do?", "look": "Can you stay polite and fix it?", "a": "I say sorry and do not argue. I take the dish back and tell the captain or the kitchen. I bring a fresh dish as fast as I can and check that the guest is happy.", "tip": "Never argue with a guest."}, {"q": "Why is hygiene important in this job?", "look": "Do you take cleanliness seriously?", "a": "Guests trust us with their food. I wash my hands often, keep my nails short, wear clean clothes and a cap, keep the tables and plates clean and cover any cut.", "tip": "Give two real habits."}], "locked": ["How will you work when the restaurant is very busy?", "Are you ready for late hours, weekends and festival days?", "A guest asks about an item you do not know. What will you do?", "How will you handle cash and bills?", "Do you know any language besides your mother tongue?"]}, {"id": "electric", "name": "Electrician / technician", "intro": "Technician interviews check your safety habits and basic knowledge. Some will ask you to explain a job or do a small test.", "free": [{"q": "What work have you done as an electrician or helper?", "look": "Is your experience real?", "a": "I have [done house wiring, fixed switches, fans and fuses, fitted lights and MCBs] for [how long]. For example, [one real job and what you did]. [If you are a fresher: I did my ITI or course in this trade and practised wiring in the workshop.]", "tip": "Give one real example with details."}, {"q": "What safety steps do you follow before you work on a wire?", "look": "Safety is the most important thing.", "a": "I switch off the main supply or the MCB and check with a tester that there is no current. I tell the others or put a \"Man at work\" board. I use insulated tools, dry shoes and gloves, and I never work on wet ground.", "tip": "Always say that you test first."}, {"q": "What is the difference between a fuse and an MCB?", "look": "Basic knowledge.", "a": "Both protect the wiring from too much current. A fuse has a thin wire that melts and must be replaced. An MCB is a switch that trips and can be switched on again after the fault is fixed.", "tip": "Keep it short and simple."}], "locked": ["What tools do you use? Can you read a simple wiring diagram?", "What is earthing and why is it important?", "A customer's fan or switch is not working. What will you do?", "Do you have a licence or certificate, such as ITI or a wireman licence?", "Are you ready to work at heights, in homes and on sites?"]}];
+  var qaOwned = false, qaAns = {};
   var qaSel = $("qa-role");
+  function qaDraw() {
+    if (!qaSel) return;
+    var r = QA[Number(qaSel.value) || 0], out = "";
+    $("qa-intro").textContent = r.intro;
+    r.free.forEach(function (x) {
+      out += '<details class="qa"><summary>' + esc(x.q) + '</summary><p class="look">They want to see: ' + esc(x.look) + '</p><p class="ans">' + esc(x.a) + '</p><p class="tipq">Tip: ' + esc(x.tip) + '</p></details>';
+    });
+    r.locked.forEach(function (q, i) {
+      var k = r.id + ":" + i, x = qaAns[k];
+      if (qaOwned && x) {
+        out += '<details class="qa"><summary>' + esc(q) + '</summary><p class="look">They want to see: ' + esc(x.look) + '</p><p class="ans">' + esc(x.answer) + '</p><p class="tipq">Tip: ' + esc(x.tip) + '</p></details>';
+      } else {
+        out += '<div class="lockq"><i>&#128274;</i><span>' + esc(q) + ' <small>(answer in the Pack)</small></span></div>';
+      }
+    });
+    $("qa-list").innerHTML = out;
+    var li = (typeof sess !== "undefined" && sess);
+    $("qa-own").innerHTML = qaOwned ? "Your Q&amp;A Pack is open. Thank you!" : (li ? "You have not bought this pack yet. Buying opens soon." : 'Bought a pack? <a href="#workpath">Log in on the Work page</a>, then come back here.');
+  }
+  function qaEnter() {
+    if (typeof sess === "undefined" || !sess) { qaOwned = false; qaDraw(); return; }
+    api("GET", "/rest/v1/purchases?select=pack").then(function (rows) {
+      qaOwned = (rows || []).some(function (x) { return x.pack === "qa" || x.pack === "kit"; });
+      if (!qaOwned) return;
+      return api("GET", "/rest/v1/pack_answers?select=role_id,idx,look,answer,tip&order=role_id,idx").then(function (all) {
+        qaAns = {}; (all || []).forEach(function (x) { qaAns[x.role_id + ":" + x.idx] = x; });
+      });
+    }).catch(function () { qaOwned = false; }).then(qaDraw);
+  }
+  window.__qaEnter = qaEnter;
   if (qaSel) {
     qaSel.innerHTML = QA.map(function (r, i) { return '<option value="' + i + '">' + esc(r.name) + '</option>'; }).join("");
-    var qaDraw = function () {
-      var r = QA[Number(qaSel.value) || 0], out = "";
-      $("qa-intro").textContent = r.intro;
-      r.free.forEach(function (x) {
-        out += '<details class="qa"><summary>' + esc(x.q) + '</summary><p class="look">They want to see: ' + esc(x.look) + '</p><p class="ans">' + esc(x.a) + '</p><p class="tipq">Tip: ' + esc(x.tip) + '</p></details>';
-      });
-      r.locked.forEach(function (q) {
-        out += '<div class="lockq"><i>&#128274;</i><span>' + esc(q) + ' <small>(answer in the Pack)</small></span></div>';
-      });
-      $("qa-list").innerHTML = out;
-    };
     qaSel.addEventListener("change", qaDraw);
     qaDraw();
   }
+  var jrBtn = $("jr-send");
+  if (jrBtn) jrBtn.addEventListener("click", function () {
+    var t = $("jr-text").value.trim(), m = $("jr-msg");
+    if (t.length < 2 || t.length > 60) { m.textContent = "Type the job name (2 to 60 letters)."; return; }
+    jrBtn.disabled = true; m.textContent = "Sending...";
+    api("POST", "/rest/v1/job_requests", { json: { job: t }, prefer: "return=minimal" })
+      .then(function () { m.textContent = "Thank you! We will try to add this job."; $("jr-text").value = ""; })
+      .catch(function () { m.textContent = "Could not send now. Please try again later."; })
+      .then(function () { jrBtn.disabled = false; });
+  });
+  setTimeout(function () { if (document.querySelector('[data-page="prepare"].on')) qaEnter(); }, 0);
 
   /* ---------- Work Path Go (Supabase) ---------- */
   var SUPA = "https://csbnlksistxaqshxmhcx.supabase.co";
