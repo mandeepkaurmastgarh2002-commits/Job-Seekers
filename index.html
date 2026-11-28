@@ -15,35 +15,42 @@
 <style>
 /* Layout concept: one narrow column built for a phone. A hero, a row of menu, then three tool cards
    (search, resume, interview) and a short FAQ. Teal accent on a cool grey ground, big tap targets, 16px inputs. */
+/* New look: royal blue with a warm orange spark. Soft rounded cards. Made for a phone. */
 :root {
-  --bg: #F4F6F8;
+  --bg: #F5F7FC;
   --surface: #FFFFFF;
-  --soft: #E8EEF2;
-  --ink: #12202B;
-  --muted: #55636F;
-  --line: #D6DDE4;
-  --accent: #0E6B7A;
+  --soft: #EAEFFB;
+  --ink: #0F1B3D;
+  --muted: #53607F;
+  --line: #DCE3F3;
+  --accent: #2F54EB;
   --on-accent: #FFFFFF;
-  --ok: #1B7F4B;
-  --ok-bg: #E2F3E9;
+  --spark: #FF8A1F;
+  --on-spark: #1C1100;
+  --hero1: #2F54EB;
+  --hero2: #5B3FD6;
+  --ok: #17794A;
+  --ok-bg: #DFF4E8;
   --miss: #A64A06;
-  --miss-bg: #FBE9D8;
-  --off: #E3E7EC;
-  --on-off: #6B7783;
+  --miss-bg: #FDEBD6;
+  --off: #E3E7F2;
+  --on-off: #6B7590;
   --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0D161D; --surface: #152029; --soft: #1D2B36; --ink: #E7EEF3; --muted: #9AA9B5; --line: #293946;
-    --accent: #6CC8D8; --on-accent: #0D161D; --ok: #5FD19A; --ok-bg: #16372A; --miss: #F2A65A; --miss-bg: #3B2A17;
-    --off: #22313D; --on-off: #8D9CA9; color-scheme: dark;
+    --bg: #0A0F22; --surface: #121A33; --soft: #1A2444; --ink: #E9EEFF; --muted: #A2AECF; --line: #263359;
+    --accent: #8FA8FF; --on-accent: #0A0F22; --spark: #FFA24D; --on-spark: #1C1100; --hero1: #2441C7; --hero2: #4A31B5;
+    --ok: #5FD19A; --ok-bg: #16372A; --miss: #F2A65A; --miss-bg: #3B2A17;
+    --off: #1E2848; --on-off: #8E9AC0; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0D161D; --surface: #152029; --soft: #1D2B36; --ink: #E7EEF3; --muted: #9AA9B5; --line: #293946;
-  --accent: #6CC8D8; --on-accent: #0D161D; --ok: #5FD19A; --ok-bg: #16372A; --miss: #F2A65A; --miss-bg: #3B2A17;
-  --off: #22313D; --on-off: #8D9CA9; color-scheme: dark;
+  --bg: #0A0F22; --surface: #121A33; --soft: #1A2444; --ink: #E9EEFF; --muted: #A2AECF; --line: #263359;
+  --accent: #8FA8FF; --on-accent: #0A0F22; --spark: #FFA24D; --on-spark: #1C1100; --hero1: #2441C7; --hero2: #4A31B5;
+  --ok: #5FD19A; --ok-bg: #16372A; --miss: #F2A65A; --miss-bg: #3B2A17;
+  --off: #1E2848; --on-off: #8E9AC0; color-scheme: dark;
 }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
@@ -136,7 +143,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, .btn:focus-vi
 .tabs a i { font-style: normal; font-size: 20px; line-height: 1; }
 .tabs a.on { color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
 
-.tabs { grid-template-columns: repeat(5, 1fr); }
+
 .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 6px 0 18px; }
 #workpath h3 { font-family: var(--font-display); font-weight: 800; font-size: 19px; margin: 18px 0 8px; }
 .steps { padding-left: 22px; margin: 0 0 8px; color: var(--ink); }
@@ -164,6 +171,59 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
 .pcard .ph a { display: inline-block; margin-right: 8px; }
 [hidden] { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* ---- v10 look ---- */
+.brand { border-bottom: 0; padding-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.brand::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--spark); box-shadow: 0 0 0 4px var(--soft); }
+.tool, .card, .faq details, .box, .pcard, .qcard, .acct { border-radius: 14px; }
+.tool { box-shadow: 0 1px 2px rgba(15,27,61,.04); }
+.btn { border-radius: 12px; }
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], textarea, select { border-radius: 10px; }
+.btn.spark { background: var(--spark); border-color: var(--spark); color: var(--on-spark); }
+.tabs { border-radius: 18px 18px 0 0; box-shadow: 0 -4px 18px rgba(15,27,61,.08); grid-template-columns: repeat(4, 1fr); }
+.tabs a.on { box-shadow: none; }
+.tabs a.on i { background: var(--accent); color: var(--on-accent); }
+.tabs a i { width: 44px; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.hero2 { background: linear-gradient(135deg, var(--hero1), var(--hero2)); color: #fff; border-radius: 22px; padding: 26px 20px 22px; margin: 14px 0 18px; position: relative; overflow: hidden; }
+.hero2::after { content: ""; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(255,255,255,.12); }
+.hero2 h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 8.4vw, 42px); line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 10px; position: relative; }
+.hero2 h1 mark { background: none; color: #FFC27A; }
+.hero2 p { margin: 0 0 16px; color: rgba(255,255,255,.88); font-size: 16px; position: relative; }
+.hero2 .btnrow { position: relative; }
+.hero2 .btn.ghost { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.5); color: #fff; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 20px; }
+.stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 8px; text-align: center; }
+.stats b { display: block; font-family: var(--font-display); font-size: 22px; color: var(--accent); }
+.stats span { font-size: 12px; color: var(--muted); font-weight: 600; }
+.secth { font-family: var(--font-display); font-weight: 800; font-size: 22px; margin: 22px 0 10px; }
+.card { border-left: 0; display: flex; gap: 14px; align-items: flex-start; }
+.card .ic { flex: none; width: 46px; height: 46px; border-radius: 14px; background: var(--soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.card .tx b { font-size: 19px; }
+.card.hot .ic { background: var(--spark); color: var(--on-spark); }
+.how { display: grid; gap: 10px; counter-reset: s; margin: 0 0 8px; padding: 0; list-style: none; }
+.how li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 12px 52px; position: relative; font-size: 15px; }
+.how li::before { content: counter(s); position: absolute; left: 12px; top: 12px; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.seg3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 16px; }
+.seg3 .btn { font-size: 14px; padding: 8px 6px; min-height: 44px; }
+.seg3 .btn.alt { background: var(--surface); }
+.panel { display: none; }
+.panel.on { display: block; }
+.qa { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 0 0 10px; }
+.qa summary { cursor: pointer; font-weight: 700; min-height: 28px; }
+.qa .look { color: var(--muted); font-size: 14px; margin: 8px 0 6px; }
+.qa .ans { background: var(--soft); border-radius: 10px; padding: 10px 12px; margin: 6px 0; font-size: 15px; }
+.qa .tipq { font-size: 14px; color: var(--ok); font-weight: 600; margin: 6px 0 2px; }
+.lockq { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; margin: 0 0 8px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); font-size: 15px; }
+.lockq i { font-style: normal; }
+.pack { border: 1px solid var(--line); background: var(--surface); border-radius: 14px; padding: 14px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.pack b { display: block; font-size: 17px; }
+.pack span { color: var(--muted); font-size: 14px; }
+.pack .price { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--accent); white-space: nowrap; text-align: right; }
+.pack .price small { display: block; font-size: 12px; font-family: var(--font-body); color: var(--spark); font-weight: 700; }
+.pro { background: linear-gradient(135deg, var(--soft), var(--surface)); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-top: 18px; }
+.pro h3 { margin: 0 0 4px; font-family: var(--font-display); font-size: 19px; }
+.src { font-size: 13px; color: var(--muted); margin-top: 14px; }
+.src a { color: var(--accent); }
 </style>
 
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
@@ -175,20 +235,35 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
   <div class="brand">First Job Helper</div>
 
   <div class="page" data-page="home">
-  <header class="hero">
-    <h1>Free tools to help you get your first job</h1>
-    <p>Search jobs faster, check your resume against a job post, and practise interview answers. No signup and no cost.</p>
-    <p class="privacy">Everything you type stays on your phone. Nothing is sent or saved on our side.</p>
+  <header class="hero2">
+    <h1>Your first job, <mark>made easier.</mark></h1>
+    <p>Search jobs, get ready for the interview, or show your skill in a short video. Free to start.</p>
+    <div class="btnrow">
+      <a class="btn spark" href="#search" data-go="search">Find jobs</a>
+      <a class="btn ghost" href="#workpath" data-go="workpath">Show my skill</a>
+    </div>
   </header>
-  <div class="cards">
-    <a class="card" href="#search" data-go="search"><b>Find jobs</b><span>Open LinkedIn, Naukri, Indeed and Google job searches with your job and city.</span></a>
-    <a class="card" href="#resume" data-go="resume"><b>Check my resume</b><span>See which words from a job post your resume is missing.</span></a>
-    <a class="card" href="#interview" data-go="interview"><b>Practise interview</b><span>25 common questions, a timer, and a "Tell me about yourself" helper.</span></a>
-    <a class="card" href="#workpath" data-go="workpath"><b>Work Path Go (test)</b><span>Workers show their skill in a short video. Bosses find them. Read the video guide now.</span></a>
+  <div class="stats">
+    <div><b>4</b><span>Job sites in one tap</span></div>
+    <div><b>40</b><span>Real interview questions</span></div>
+    <div><b>Free</b><span>To start</span></div>
   </div>
+  <h2 class="secth">What do you want to do?</h2>
+  <div class="cards">
+    <a class="card" href="#search" data-go="search"><div class="ic">&#9906;</div><div class="tx"><b>Find jobs</b><span>Open LinkedIn, Naukri, Indeed and Google job searches, already filled in with your job and city.</span></div></a>
+    <a class="card" href="#prepare" data-go="prepare"><div class="ic">&#9998;</div><div class="tx"><b>Get ready</b><span>Real interview questions with sample answers, a practice timer, and a resume checker.</span></div></a>
+    <a class="card hot" href="#workpath" data-go="workpath"><div class="ic">&#9654;</div><div class="tx"><b>Work Path Go</b><span>Workers: make a short skill video. Bosses: find skilled people. Free to try.</span></div></a>
+  </div>
+  <h2 class="secth">How it works</h2>
+  <ol class="how">
+    <li><b>Search.</b> Pick your job and city. Open the real job sites in one tap.</li>
+    <li><b>Prepare.</b> Practise the questions that candidates really get asked.</li>
+    <li><b>Show your skill.</b> A 30 second video says more than a long resume.</li>
+  </ol>
+  <p class="note">Job searches and the resume checker run on your phone. Nothing you type there is saved by us. Work Path Go needs an account, because bosses and workers must be able to trust each other.</p>
   <section class="faq" aria-labelledby="faq-h">
     <h2 id="faq-h">Questions</h2>
-    <details><summary>Is First Job Helper really free?</summary><p>Yes. There is no signup, no payment and no hidden fee.</p></details>
+    <details><summary>Is First Job Helper really free?</summary><p>The job search, the resume checker, the practice timer and Work Path Go are free. Extra packs with full model answers and resume templates cost a small price (from Rs 10). They are coming soon.</p></details>
     <details><summary>Do you save my resume?</summary><p>No. The resume checker runs inside your browser. What you type is not sent to any server and is gone when you close the page.</p></details>
     <details><summary>Does it show real jobs?</summary><p>It opens the real search pages of LinkedIn, Naukri, Indeed and Google with your job and city filled in. The jobs you see come from those websites, not from here.</p></details>
     <details><summary>Will these tools get me a job?</summary><p>No tool can promise that. They help you search faster, fix missing words in your resume and practise answers. Your results depend on how many good applications you send and how you do in interviews.</p></details>
@@ -219,33 +294,30 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
     <p class="note">These buttons open the search pages of other websites. First Job Helper does not list jobs itself. Always check a job is real. A real company never asks you to pay money to get a job.</p>
   </section>
 
-  <section class="tool page" data-page="resume" id="resume" aria-labelledby="resume-h">
-    <h2 id="resume-h">Resume checker</h2>
-    <p class="lead">Paste a job post and your resume text. See which important words from the job post your resume is missing.</p>
-    <label class="field"><span>Job post</span>
-      <textarea id="r-job" spellcheck="false"></textarea></label>
-    <label class="field"><span>Your resume text</span>
-      <textarea id="r-resume" spellcheck="false"></textarea></label>
-    <div class="btnrow">
-      <button class="btn" type="button" id="r-check">Check my resume</button>
-      <button class="btn alt" type="button" id="r-clear">Clear both boxes</button>
+  <section class="tool page" data-page="prepare" id="prepare" aria-labelledby="prep-h">
+    <h2 id="prep-h">Get ready for your interview</h2>
+    <p class="lead">Real questions, sample answers, a timer and a resume check.</p>
+    <div class="seg3" role="tablist">
+      <button class="btn" type="button" data-pb="qa">Real questions</button>
+      <button class="btn alt" type="button" data-pb="practice">Practice</button>
+      <button class="btn alt" type="button" data-pb="resume">Resume</button>
     </div>
-    <p class="hint">The boxes start with example text. Clear them and paste your own.</p>
-    <div class="result" id="r-result" aria-live="polite" hidden>
-      <div class="score"><span class="num" id="r-num">0%</span><span class="lbl" id="r-lbl">of the main job words are in your resume</span></div>
-      <div class="meter" aria-hidden="true"><div id="r-bar"></div></div>
-      <h3>Words from the job post that you already use</h3>
-      <ul class="chips" id="r-ok"></ul>
-      <h3>Words missing from your resume</h3>
-      <ul class="chips" id="r-miss"></ul>
-      <p class="note">Only add a missing word if it is true for you. Never list a skill you cannot talk about in an interview.</p>
-      <h3>Quick resume checks</h3>
-      <ul class="ticks" id="r-ticks"></ul>
-    </div>
-  </section>
 
-  <section class="tool page" data-page="interview" id="interview" aria-labelledby="interview-h">
-    <h2 id="interview-h">Interview practice</h2>
+    <div class="panel on" data-panel="qa">
+      <label class="field"><span>Which job are you going for?</span>
+        <select id="qa-role"></select></label>
+      <p class="hint" id="qa-intro"></p>
+      <div id="qa-list"></div>
+      <h3 class="secth">Get all the answers</h3>
+      <div class="pack"><div><b>Interview Q&amp;A Pack</b><span>25 more questions with model answers</span></div><div class="price">&#8377;10<small>Coming soon</small></div></div>
+      <div class="pack"><div><b>Resume Templates</b><span>Ready resume files you can edit</span></div><div class="price">&#8377;20<small>Coming soon</small></div></div>
+      <div class="pack"><div><b>Full Starter Kit</b><span>Everything: Q&amp;A, resumes, cover letters, job tracker</span></div><div class="price">&#8377;29<small>Coming soon</small></div></div>
+      <p class="src">Where these questions come from: questions that candidates report on public sites such as <a href="https://www.naukri.com/blog/11-common-hr-interview-questions-for-freshers/" target="_blank" rel="noopener">Naukri</a> and <a href="https://ambitionbox.com/profiles/data-entry-operator/interview-questions" target="_blank" rel="noopener">AmbitionBox</a>. The answers are our own. Always use your own true details. Never say something false in an interview.</p>
+    </div>
+
+    <div class="panel" data-panel="practice">
+
+    <h3 class="secth" id="interview-h">Practice timer</h3>
     <p class="lead">Get a question, say your answer out loud, and watch the timer. About 60 to 90 seconds is a good answer.</p>
     <label class="field"><span>Type of question</span>
       <select id="q-cat"></select></label>
@@ -277,7 +349,42 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
       <div class="out" id="b-out">Fill the three boxes above to see your answer here.</div>
       <button class="btn" type="button" id="b-copy">Copy answer</button>
     </div>
+  
+    </div>
+
+    <div class="panel" data-panel="resume">
+
+    <h3 class="secth" id="resume-h">Resume checker (free)</h3>
+    <p class="lead">Paste a job post and your resume text. See which important words from the job post your resume is missing.</p>
+    <label class="field"><span>Job post</span>
+      <textarea id="r-job" spellcheck="false"></textarea></label>
+    <label class="field"><span>Your resume text</span>
+      <textarea id="r-resume" spellcheck="false"></textarea></label>
+    <div class="btnrow">
+      <button class="btn" type="button" id="r-check">Check my resume</button>
+      <button class="btn alt" type="button" id="r-clear">Clear both boxes</button>
+    </div>
+    <p class="hint">The boxes start with example text. Clear them and paste your own.</p>
+    <div class="result" id="r-result" aria-live="polite" hidden>
+      <div class="score"><span class="num" id="r-num">0%</span><span class="lbl" id="r-lbl">of the main job words are in your resume</span></div>
+      <div class="meter" aria-hidden="true"><div id="r-bar"></div></div>
+      <h3>Words from the job post that you already use</h3>
+      <ul class="chips" id="r-ok"></ul>
+      <h3>Words missing from your resume</h3>
+      <ul class="chips" id="r-miss"></ul>
+      <p class="note">Only add a missing word if it is true for you. Never list a skill you cannot talk about in an interview.</p>
+      <h3>Quick resume checks</h3>
+      <ul class="ticks" id="r-ticks"></ul>
+    </div>
+  
+      <div class="pro">
+        <h3>Want a professional resume?</h3>
+        <p class="lead">Ready, clean resume templates that you only need to fill in. Coming soon for &#8377;20.</p>
+        <span class="btn is-off">Coming soon</span>
+      </div>
+    </div>
   </section>
+
   <section class="tool page" data-page="workpath" id="workpath" aria-labelledby="wp-h">
     <h2 id="wp-h">Work Path Go</h2>
     <p class="lead">Show your skill in a short video instead of a long resume. Bosses watch it and contact you. This is a test version. Share only what you are comfortable with.</p>
@@ -376,12 +483,11 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
   <nav class="tabs" aria-label="Main menu">
     <a href="#home" data-go="home"><i>&#8962;</i>Home</a>
     <a href="#search" data-go="search"><i>&#9906;</i>Jobs</a>
-    <a href="#resume" data-go="resume"><i>&#9998;</i>Resume</a>
-    <a href="#interview" data-go="interview"><i>&#9743;</i>Practice</a>
+    <a href="#prepare" data-go="prepare"><i>&#9998;</i>Prepare</a>
     <a href="#workpath" data-go="workpath"><i>&#9654;</i>Work</a>
   </nav>
   <noscript><style>.page{display:block!important}</style></noscript>
-  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 9.</footer>
+  <footer class="foot">First Job Helper. Free tools for freshers. Made by Aman. Version 10.</footer>
 </div>
 
 <script>
@@ -391,8 +497,15 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
 
 
   /* ---------- Menu: show one page at a time ---------- */
-  var pages = ["home", "search", "resume", "interview", "workpath"];
+  var pages = ["home", "search", "prepare", "workpath"];
+  var alias = { resume: ["prepare", "resume"], interview: ["prepare", "practice"], prepare: ["prepare", null] };
+  function showPanel(p) {
+    var ps = document.querySelectorAll(".panel"), bs = document.querySelectorAll("[data-pb]");
+    for (var i = 0; i < ps.length; i++) ps[i].classList.toggle("on", ps[i].getAttribute("data-panel") === p);
+    for (var k = 0; k < bs.length; k++) bs[k].classList.toggle("alt", bs[k].getAttribute("data-pb") !== p);
+  }
   function showPage(name, noScroll) {
+    if (alias[name]) { if (alias[name][1]) showPanel(alias[name][1]); name = alias[name][0]; }
     if (pages.indexOf(name) < 0) name = "home";
     var els = document.querySelectorAll(".page");
     for (var i = 0; i < els.length; i++) els[i].classList.toggle("on", els[i].getAttribute("data-page") === name);
@@ -418,6 +531,101 @@ select { font: inherit; font-size: 16px; width: 100%; min-height: 46px; padding:
   window.addEventListener("hashchange", function () { showPage(location.hash.replace("#", "")); });
   showPage(location.hash.replace("#", ""), true);
 
+
+  /* ---------- Prepare: real questions ---------- */
+  var pbs = document.querySelectorAll("[data-pb]");
+  for (var pi = 0; pi < pbs.length; pi++) {
+    pbs[pi].addEventListener("click", function () { showPanel(this.getAttribute("data-pb")); });
+  }
+  var QA = [
+    { id: "hr", name: "Any job (HR round)",
+      intro: "The first round is often a short talk with HR. These questions come up for almost every job.",
+      free: [
+        { q: "Tell me about yourself.", look: "Can you speak clearly and keep it short?",
+          a: "My name is [your name]. I finished [course] from [college] in [year]. I am good at [skill 1] and [skill 2]. In college I [one real thing you did, for example helped run an event]. Now I want to start my career as [job], because [honest reason].",
+          tip: "Keep it to 60 seconds. Do not tell your whole life story." },
+        { q: "Why should we hire you?", look: "Do you know what the company needs?",
+          a: "I am a fresher, so I learn fast and I am ready to work hard. I am always on time and I finish what I start. For this job I can already [one skill that fits the job]. I will give my best every day and I will keep learning.",
+          tip: "Only say things that are true for you. Give one real example if you can." },
+        { q: "What salary do you expect?", look: "Are your expectations realistic?",
+          a: "I am a fresher and my main aim is to learn and grow. I expect a salary as per the company's norms for this role. If you can share the range, I can tell you if it works for me.",
+          tip: "Do not say a very high number, and do not say \"anything is fine\"." }
+      ],
+      locked: ["Why do you want to work in our company?", "What is your biggest strength and your weakness?", "Where do you see yourself in three years?", "Are you ready for night shifts or to move to another city?", "Do you have any questions for us?"] },
+    { id: "bpo", name: "Customer care / BPO",
+      intro: "Call centre and support interviews check your voice, patience and how you speak to upset people.",
+      free: [
+        { q: "How will you handle an angry customer?", look: "Are you calm, and do you take ownership of the problem?",
+          a: "I stay calm and let the customer finish speaking. I say sorry for the trouble. Then I check what went wrong and tell the customer what I will do and how long it will take. If I cannot solve it myself, I ask my team leader and I tell the customer clearly.",
+          tip: "Never argue with the customer, even if they are wrong." },
+        { q: "What is the difference between inbound and outbound calls?", look: "Do you know the basics of the work?",
+          a: "In inbound, the customer calls us for help, for example a question or a complaint. In outbound, we call the customer, for example for sales, reminders or feedback. Inbound needs patience and good listening. Outbound needs a polite voice and good convincing.",
+          tip: "Say which one you prefer and why." },
+        { q: "How will you stay fresh on long calls with the same questions?", look: "Patience and energy for repeat work.",
+          a: "I treat every customer as a new person, because for them it is a new problem. I take my breaks, drink water, and keep a smile in my voice. I focus on solving one call at a time.",
+          tip: "A smile can be heard on the phone. Say that." }
+      ],
+      locked: ["What is First Call Resolution and why does it matter?", "Voice process or non-voice process: which do you prefer?", "How will you keep customer data safe?", "What will you do if you do not know the answer?", "Are you ready for rotational or night shifts?"] },
+    { id: "data", name: "Data entry / office work",
+      intro: "Office jobs check your typing, accuracy and basic computer skills. You may get a typing test.",
+      free: [
+        { q: "What is your typing speed?", look: "Honesty, speed and accuracy.",
+          a: "My speed is about [your number] words per minute, with about [your accuracy]% accuracy. I am happy to take a typing test now.",
+          tip: "Test yourself on a free typing site before the interview. Accuracy matters more than speed." },
+        { q: "How do you make sure there are no mistakes in your entries?", look: "Care and checking habits.",
+          a: "I type slowly and carefully first. Then I check each row against the original. I use spell check, and I sort or filter the data to find odd values. Before I submit, I check totals and look again at important columns.",
+          tip: "Mention one habit that is really yours." },
+        { q: "What do you know in Excel?", look: "Basic skills, said honestly.",
+          a: "I can enter and format data, sort and filter, and use SUM, AVERAGE, COUNT and IF. I can make a simple chart. I am now learning VLOOKUP.",
+          tip: "Only say what you can do. They may ask you to show it." }
+      ],
+      locked: ["What will you do if two records do not match?", "What file endings do Word and Excel files have?", "How will you keep the company's data private?", "Can you do repeat work for many hours?", "What is VLOOKUP and when do you use it?"] },
+    { id: "sales", name: "Shop / sales",
+      intro: "Shop and sales interviews check how you talk to customers and handle \"no\".",
+      free: [
+        { q: "Sell me this pen.", look: "Do you ask questions first, or just push?",
+          a: "First I ask: \"What do you write most, notes or forms?\" Then I show the part that fits: \"This pen writes smoothly and does not smudge, so your notes stay clean.\" Then I ask: \"Would you like to try it?\"",
+          tip: "Ask first, then match, then ask for the sale." },
+        { q: "A customer walks in. What do you do?", look: "Welcome and helpfulness.",
+          a: "I smile, say hello and ask how I can help. I listen to what the customer needs, show two or three good choices, and explain the price clearly. If the customer wants to look alone, I step back and stay nearby.",
+          tip: "Do not follow the customer around. Do not push." },
+        { q: "The customer says the price is too high. What now?", look: "Do you stay polite and offer a solution?",
+          a: "I understand. I explain what the customer gets for the price, for example quality or warranty. If there is a cheaper option, I show it. I never argue about the price.",
+          tip: "Never lie about the product to make the sale." }
+      ],
+      locked: ["How do you deal with a customer who is only looking?", "What will you do if the product is out of stock?", "What do you know about our shop or brand?", "How will you reach a monthly sales target?", "How will you work with the other staff at the counter?"] },
+    { id: "delivery", name: "Delivery / warehouse",
+      intro: "Delivery and warehouse jobs check that you are reliable, on time and safe.",
+      free: [
+        { q: "Why do you want this delivery job, and can you work long hours in any weather?", look: "Are you serious and reliable?",
+          a: "I want steady work and I like being outside and moving around. I am ready to work the hours needed, including bad weather, and I will always be careful on the road.",
+          tip: "Only promise what you can really do." },
+        { q: "How will you make sure the parcel reaches the right person on time?", look: "Planning and care.",
+          a: "I check the address and phone number before I start. I plan my route, call the customer if the address is not clear, and give the parcel only to the right person. I use the OTP or take a photo as proof, and I tell my manager at once if there is a problem.",
+          tip: "Mention checking the address and getting proof of delivery." },
+        { q: "The customer is not at home and does not pick up the phone. What will you do?", look: "Do you follow rules and stay calm?",
+          a: "I call two or three times and send a message. I ask neighbours only if the company allows it. If I still cannot reach the customer, I follow the company rule: try again later or return the parcel. I report it in the app.",
+          tip: "Never leave a parcel in an unsafe place." }
+      ],
+      locked: ["Do you know the roads and areas of this city?", "What papers and vehicle do you have (licence, bike, phone)?", "What will you do if a parcel is damaged?", "How will you stay safe on the road?", "How many deliveries can you do in one day?"] }
+  ];
+  var qaSel = $("qa-role");
+  if (qaSel) {
+    qaSel.innerHTML = QA.map(function (r, i) { return '<option value="' + i + '">' + esc(r.name) + '</option>'; }).join("");
+    var qaDraw = function () {
+      var r = QA[Number(qaSel.value) || 0], out = "";
+      $("qa-intro").textContent = r.intro;
+      r.free.forEach(function (x) {
+        out += '<details class="qa"><summary>' + esc(x.q) + '</summary><p class="look">They want to see: ' + esc(x.look) + '</p><p class="ans">' + esc(x.a) + '</p><p class="tipq">Tip: ' + esc(x.tip) + '</p></details>';
+      });
+      r.locked.forEach(function (q) {
+        out += '<div class="lockq"><i>&#128274;</i><span>' + esc(q) + ' <small>(answer in the Pack)</small></span></div>';
+      });
+      $("qa-list").innerHTML = out;
+    };
+    qaSel.addEventListener("change", qaDraw);
+    qaDraw();
+  }
 
   /* ---------- Work Path Go (Supabase) ---------- */
   var SUPA = "https://csbnlksistxaqshxmhcx.supabase.co";
